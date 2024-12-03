@@ -25,16 +25,23 @@ void same_tag(char * s1, char * s2);
     float valFloat;
 }
 
-
+%token OPE1 OPE1 ENTERO REAL PLUS MINUS MIL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN GBP 
+%token YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON METRO YARDE PIE MILE DAY HOURS MINUTE SECOND 
+%token MILO DECI CENTI DECA HECTO KILO 
 %token <valString>  
 %token <valFloat> 
 %token <valInt>  
+
 
 
 %start S
 %%
 
 S:  
+
+
+
+
 ;
 
 
