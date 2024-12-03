@@ -16,7 +16,7 @@ mode    "(?i:moda)"
 median  "(?i:mediana)"
 euro    "EUR"
 dollar  "USD"
-pound   "GBP" 
+gbp   "GBP" 
 yen     "JPY"
 gramo   "(?i:gramo)"
 stone   "(?i:piedra)"
@@ -43,8 +43,7 @@ kilo    "(?i:kilo)"
 {ope1}                {return OPE1;}
 {ope2}                {return OPE2;}
 {entero}              {yylval.valInt = atoi(yytext); return ENTERO;}
-{real}                {yylval.valFloat = atof(yytext); return REAL;}
-//TODO OPERACIONES Y MEDIDAS           
+{real}                {yylval.valFloat = atof(yytext); return REAL;}         
 "+"                   {return (PLUS);}
 "-"                   {return (MINUS);}
 "*"                   {return (MUL);}
@@ -59,16 +58,28 @@ mode                  {return MODE;}
 median                {return MEDIAN;}
 euro                  {return EURO;}
 dollar                {return DOLLAR;}
-pound                 {return POUND;}
+gbp                   {return GBP;}
 yen                   {return YEN;}
 gramo                 {return GRAMO;}
 stone                 {return STONE;}
-pound                {return POUND;}
+pound                 {return POUND;}
 onza                  {return ONZA;}
 litro                 {return LITRO;}
 pinta                 {return PINTA;}
 gallon                {return GALLON;}
 metro                 {return METRO;}
+yarda                 {return YARDA;}
+pie                   {return PIE;}
+mile                  {return MILE;}
+day                   {return DAY;}
+hours                 {return HOURS;}
+minute                {return MINUTE;}
+second                {return SECOND;}
+mili                  {return MILI;}
+deci                  {return DECI;}
+deca                  {return DECA;}
+centi                 {return CENTI;}
+kilo                  {return KILO;}
 
 
 [ \t\r]+              { } 
