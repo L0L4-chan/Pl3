@@ -40,7 +40,7 @@
         entero [0-9]+
         float [0-9]+\.[0-9]+
         arrow ->
-        %+-*/^()
+        %+-*()
         %MOD
         %MEDIANA
         %MEDIA
@@ -49,8 +49,8 @@
         %LITRO PINTA GALON 
         %METRO YARDA PIE MILLA
         %MILI CENTI DECI DECA HECTO KILO 
-        %EURO DOLAR YEN LIBRA YUAN RUBLOS RUPIAS
-        %AÑO MES DIA HORA MINUTO SEGUNDO
+        %EURO DOLAR YEN LIBRA 
+        %DIA HORA MINUTO SEGUNDO
 
     
         
