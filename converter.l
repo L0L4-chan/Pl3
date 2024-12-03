@@ -38,6 +38,7 @@ deci    "(?i:deci)"
 deca    "(?i:deca)"
 centi   "(?i:centi)"
 kilo    "(?i:kilo)"
+hecto    "(?i:hecto)"
 
 
 {ope1}                {return OPE1;}
@@ -80,9 +81,11 @@ deci                  {return DECI;}
 deca                  {return DECA;}
 centi                 {return CENTI;}
 kilo                  {return KILO;}
+hecto                 {return HECTO}
 
 
 [ \t\r]+              { } 
+.   	              { }
 %%
 
 void showError(char* arg){ printf("LEXICAL ERROR %s %d\n  ",  arg, yylineno);}
