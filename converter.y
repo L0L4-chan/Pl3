@@ -25,8 +25,8 @@ void same_tag(char * s1, char * s2);
     float valFloat;
 }
 
-%token OPE1 OPE1 ENTERO REAL PLUS MINUS MIL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN GBP 
-%token YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON METRO YARDE PIE MILE DAY HOURS MINUTE SECOND 
+%token OPE1 OPE2 ENTERO REAL PLUS MINUS MIL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN GBP 
+%token YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON METRO YARDA PIE MILE DAY HOURS MINUTE SECOND 
 %token MILO DECI CENTI DECA HECTO KILO 
 %token <valString>  
 %token <valFloat> 
@@ -37,11 +37,23 @@ void same_tag(char * s1, char * s2);
 %start S
 %%
 
-S:  
+S:  OPE1 conversion
+    | OPE2 operacion 
+    ;
+
+conversion:
+    ENTERO unidad ARROW unidad {
+        printf("Realizando conversión de %d %s a  %s\n", $1, $2, $3, $4);
+        //TODO FUNCIONES ver si ambas unidades son compatibles
+    }
+    | REAL unidad ARROW unidad {
+        printf("Realizando conversión de %.2f %s a %s\n", $1, $2, $3, $4);
+        // TODO FUNCIONES ver si ambas unidades son compatibles
+    }
+    ;
 
 
-
-
+operacion: 
 ;
 
 
