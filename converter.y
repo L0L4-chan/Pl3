@@ -25,9 +25,9 @@ void same_tag(char * s1, char * s2);
     float valFloat;
 }
 
-%token OPE1 OPE2 ENTERO REAL PLUS MINUS MIL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN GBP 
-%token YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON METRO YARDA PIE MILE DAY HOURS MINUTE SECOND 
-%token MILO DECI CENTI DECA HECTO KILO 
+%token OPE1 OPE2 ENTERO REAL PLUS MINUS MIL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
+%token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON METRO YARDA PIE MILE DAY HOURS MINUTE SECOND 
+%token MILI DECI CENTI DECA HECTO KILO 
 %token <valString>  
 %token <valFloat> 
 %token <valInt>  
@@ -43,14 +43,59 @@ S:  OPE1 conversion
 
 conversion:
     ENTERO unidad ARROW unidad {
-        printf("Realizando conversión de %d %s a  %s\n", $1, $2, $3, $4);
+            if(same_tag($2, $4)) {
+                converterInt($1,$2,$4); // TODO FUNCION conversion
+
+                printf("Realizando conversión de %d %s a  %s\n", $1, $2, $4);
+            }
+
+
+        
         //TODO FUNCIONES ver si ambas unidades son compatibles
     }
     | REAL unidad ARROW unidad {
-        printf("Realizando conversión de %.2f %s a %s\n", $1, $2, $3, $4);
-        // TODO FUNCIONES ver si ambas unidades son compatibles
+         if(same_tag($2, $4)) {
+             converterFloat($1,$2,$4); // TODO FUNCIONES conversion
+                printf("Realizando conversión de %.2f %s a %s\n", $1, $2, $4);
+   
+         }
+
     }
     ;
+
+unidad:
+    ud  {$$1}
+    | prefijo ud {strcat($$1, $$2)}
+
+
+ud: 
+    YEN             { $$ = "dinero yen "}
+    | GBP           { $$ = "dinero gbp "}
+    | DOLLAR        { $$ = "dinero dollar" }
+    | EURO          { $$ = "dinero euro "}
+    | GRAMO         { $$ = "peso gr "}
+    | STONE         { $$ = "peso stone "}
+    | POUND         { $$ = "peso libra "}
+    | ONZA          { $$ = "peso onza "}
+    | LITRO         { $$ = "capacidad l "}
+    | PINTA         { $$ = "capacidad pinta "}
+    | GALLON        { $$ = "capacidad galon "}
+    | METRO         { $$ = "distancia m "}
+    | YARDA         { $$ = "distancia yarda "}
+    | PIE           { $$ = "distancia pie "}
+    | MILE          { $$ = "distancia milla "}
+    | DAY           { $$ = "tiempo dia "}
+    | HOURS         { $$ = "tiempo hora "}
+    | MINUTE        { $$ = "tiempo minutos "}
+    | SECOND        { $$ = "tiempo segundos "}
+
+prefijo:
+    MILO            { $$ = "/ 1000 "}
+    |DECI           { $$ = "/ 10 "}
+    |CENTI          { $$ = "/ 100 "}
+    |DECA           { $$ = "* 10 "}
+    |HECTO          { $$ = "* 100 "}
+    |KILO           { $$ = "* 1000 "}
 
 
 operacion: 
@@ -110,10 +155,61 @@ void print_errors() {
     error_count = 0;
 }
 
-void same_tag (char *s1,  char *s2) {
-    if (strcmp(s1, s2) != 0){
-        char error_msg[100];
-        snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", s1, s2);
-        yyerror(error_msg);
+
+void same_tag(char *s1, char *s2) {
+    char *tokens1[4];  
+    char *tokens2[4];
+    char *compare1; 
+    char *compare2;
+
+    int count1 = 0;
+    int count2 = 0;
+
+    char *token = strtok(s1, " ");
+    while (token != NULL && count1 < 4) {
+        tokens1[count1++] = token;
+        token = strtok(NULL, " ");
     }
-}    
+
+    token = strtok(s2, " ");
+    while (token != NULL && count2 < 4) {
+        tokens2[count2++] = token;
+        token = strtok(NULL, " ");
+    }
+
+  
+
+    if (count1 == 2 && count2 == 2) {
+        compare1 = tokens1[0]; 
+        compare2 = tokens2[0];  
+    } else if (count1 == 4 && count2 == 4) {
+        compare1 = tokens1[2];  
+        compare2 = tokens2[2];  
+    } else if (count1 == 2 && count2 == 4) {
+        compare1 = tokens1[0];  
+        compare2 = tokens2[2]; 
+    } else if (count1 == 4 && count2 == 2) {
+        compare1 = tokens1[2];  
+        compare2 = tokens2[0]; 
+    } else {
+        yyerror("Error: Formato no válido para las cadenas.\n");
+        return;
+    }
+
+    
+    if (strcmp(compare1, compare2) != 0) {
+        char error_msg[100];
+        snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
+        yyerror(error_msg);
+        return;
+    }
+}
+
+string converterInt(int x, char* s1, char* s2){
+
+}
+
+string converterFloat(int x, char* s1, char* s2){
+
+}
+  
