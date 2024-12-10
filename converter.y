@@ -8,6 +8,55 @@ struct er {
     int line;
 };
 
+struct medidas{
+    char* nombre;
+    float conversion
+}
+
+
+
+struct medidas distancia[4];
+distancia[0].nombre = "metro";
+distancia[0].conversion = 1;
+distancia[1].nombre = "yarda";
+distancia[1].conversion = 1.09
+distancia[2].nombre = "pie";
+distancia[2].conversion = 3.28;
+distancia[3].nombre = "mile";
+distancia[3].conversion = 0.00062;
+
+struct medidas monedas[4];
+monedas[0].nombre = "euro";
+monedas[0].conversion = 1;
+monedas[1].nombre = "dolar";
+monedas[1].conversion = 1.05;
+monedas[2].nombre = "gbp";
+monedas[2].conversion = 0.83;
+monedas[3].nombre = "yen";
+monedas[3].conversion = 156.67;
+
+
+struct medidas peso[4];
+peso[0].nombre = "gramo";
+peso[0].conversion = 1;
+peso[1].nombre = "pound";
+peso[1].conversion = 0.0022;
+peso[2].nombre = "onza";
+peso[2].conversion = 0.035;
+peso[3].nombre = "stone";
+peso[3].conversion = 0.00016;
+
+struct medidas capacidad[4];
+capacidad[0].nombre = "litro"
+capacidad[0].conversion = 1;
+capacidad[1].nombre = "pinta"
+capacidad[1].conversion = 2.11;
+capacidad[2].nombre = "gallon";
+capacidad[2].conversion = 0.26;
+capacidad[3].nombre = "barril";
+capacidad[3].conversion = 0.0063;
+
+
 struct er errores[100];
 int error_count = 0;
 
@@ -26,7 +75,7 @@ void same_tag(char * s1, char * s2);
 }
 
 %token OPE1 OPE2 ENTERO REAL PLUS MINUS MUL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
-%token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON METRO YARDA PIE MILE DAY HOURS MINUTE SECOND 
+%token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
 %token MILI DECI CENTI DECA HECTO KILO 
 %token <valString>  
 %token <valFloat> 
@@ -37,8 +86,8 @@ void same_tag(char * s1, char * s2);
 %start S
 %%
 
-S:  OPE1 conversion
-    | OPE2 operacion 
+S:  OPE1 conversion {printf( "%d",$2)}
+    | OPE2 operacion {printf( "%d",$2)}
     ;
 
 conversion:
@@ -63,6 +112,14 @@ conversion:
     }
     ;
 
+operacion: 
+ MEAN  lista  
+ | MEDIAN lista
+ | MODE lista
+ | cuenta
+ ;
+
+
 unidad:
     ud  {$$1}
     | prefijo ud {strcat($$1, $$2)}
@@ -80,14 +137,12 @@ ud:
     | LITRO         { $$ = "capacidad l "}
     | PINTA         { $$ = "capacidad pinta "}
     | GALLON        { $$ = "capacidad galon "}
+    | BARRIL        { $$ = "capacidad barril "}
     | METRO         { $$ = "distancia m "}
     | YARDA         { $$ = "distancia yarda "}
     | PIE           { $$ = "distancia pie "}
     | MILE          { $$ = "distancia milla "}
-    | DAY           { $$ = "tiempo dia "}
-    | HOURS         { $$ = "tiempo hora "}
-    | MINUTE        { $$ = "tiempo minutos "}
-    | SECOND        { $$ = "tiempo segundos "}
+
 
 prefijo:
     MILO            { $$ = "/ 1000 "}
@@ -96,14 +151,6 @@ prefijo:
     |DECA           { $$ = "* 10 "}
     |HECTO          { $$ = "* 100 "}
     |KILO           { $$ = "* 1000 "}
-
-
-operacion: 
- MEAN  lista
- | MEDIAN lista
- | MODE lista
- | cuenta
- ;
 
 
 lista:

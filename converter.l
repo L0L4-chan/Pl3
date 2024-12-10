@@ -25,14 +25,11 @@ onza    "(?i:onza)"
 litro   "(?i:litro)" 
 pinta   "(?i:pinta)"
 gallon  "(?i:galon)"
+barril  "(?i:barril)"
 metro   "(?i:metro)"
 yarda   "(?i:yarda)"
 pie     "(?i:pie)"
 mile    "(?i:milla)"
-day     "(?i:dia)"
-hours   "(?i:hora)"
-minute  "(?i:minuto)"
-second  "(?i:segundo)"
 mili    "(?i:mili)"
 deci    "(?i:deci)"
 deca    "(?i:deca)"
@@ -68,14 +65,11 @@ onza                  {return ONZA;}
 litro                 {return LITRO;}
 pinta                 {return PINTA;}
 gallon                {return GALLON;}
+barril                {return BARRIL;}
 metro                 {return METRO;}
 yarda                 {return YARDA;}
 pie                   {return PIE;}
 mile                  {return MILE;}
-day                   {return DAY;}
-hours                 {return HOURS;}
-minute                {return MINUTE;}
-second                {return SECOND;}
 mili                  {return MILI;}
 deci                  {return DECI;}
 deca                  {return DECA;}
