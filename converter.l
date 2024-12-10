@@ -16,7 +16,7 @@ mode    "(?i:moda)"
 median  "(?i:mediana)"
 euro    "EUR"
 dollar  "USD"
-gbp   "GBP" 
+gbp     "GBP" 
 yen     "JPY"
 gramo   "(?i:gramo)"
 stone   "(?i:piedra)"
@@ -37,20 +37,20 @@ centi   "(?i:centi)"
 kilo    "(?i:kilo)"
 hecto    "(?i:hecto)"
 
+%%
 
-{ope1}                {return OPE1;}
-{ope2}                {return OPE2;}
-{entero}              {yylval.valInt = atoi(yytext); return ENTERO;}
-{real}                {yylval.valFloat = atof(yytext); return REAL;}         
-"+"                   {return (PLUS);}
-"-"                   {return (MINUS);}
-"*"                   {return (MUL);}
-"/"                   {return (DIV);}
-"%"                   {return (MOD);}
-\n                    {return (DELIM);}
-"("                   {return (LPAREN);}
-")"                   {return (RPAREN);}
-"->"                  {return (ARROW);}
+ope1                  {return OPE1;}
+ope2                  {return OPE2;}
+entero                {yylval.valInt = atoi(yytext); return ENTERO;}
+real                  {yylval.valFloat = atof(yytext); return REAL;}         
+"+"                   {return PLUS;}
+"-"                   {return MINUS;}
+"*"                   {return MUL;}
+"/"                   {return DIV;}
+"%"                   {return MOD;}
+"("                   {return LPAREN;}
+")"                   {return RPAREN;}
+"->"                  {return ARROW;}
 mean                  {return MEAN;}
 mode                  {return MODE;}
 median                {return MEDIAN;}
