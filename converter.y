@@ -25,7 +25,7 @@ void same_tag(char * s1, char * s2);
     float valFloat;
 }
 
-%token OPE1 OPE2 ENTERO REAL PLUS MINUS MIL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
+%token OPE1 OPE2 ENTERO REAL PLUS MINUS MUL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
 %token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON METRO YARDA PIE MILE DAY HOURS MINUTE SECOND 
 %token MILI DECI CENTI DECA HECTO KILO 
 %token <valString>  
@@ -44,7 +44,7 @@ S:  OPE1 conversion
 conversion:
     ENTERO unidad ARROW unidad {
             if(same_tag($2, $4)) {
-                converterInt($1,$2,$4); // TODO FUNCION conversion
+                converter($1,$2,$4); // TODO FUNCION conversion
 
                 printf("Realizando conversión de %d %s a  %s\n", $1, $2, $4);
             }
@@ -55,7 +55,7 @@ conversion:
     }
     | REAL unidad ARROW unidad {
          if(same_tag($2, $4)) {
-             converterFloat($1,$2,$4); // TODO FUNCIONES conversion
+             converter($1,$2,$4); // TODO FUNCIONES conversion
                 printf("Realizando conversión de %.2f %s a %s\n", $1, $2, $4);
    
          }
@@ -99,11 +99,43 @@ prefijo:
 
 
 operacion: 
+ MEAN  lista
+ | MEDIAN lista
+ | MODE lista
+ | cuenta
+ ;
+
+
+lista:
+   entero unidad
+ | lista entero unidad 
+ | float unidad
+ | lista float unidad
+ ;
+
+cuenta: 
+entero unidad signo entero unidad {
+
+    if(same_tag($2, $5)) { // pendiente de hacer una variacion para operaciones 
+        converterOperacion($1, $2, $3, $4,$5); // TODO FUNCION operacion
+    }
+}
+| cuenta signo entero unidad
+| cuenta signo float unidad
+| float unidad signo float unidad
+| LPAREN cuenta RPAREN
+
+
+signo:
+    PLUS           { $$ = "+"; }
+    | MINUS          { $$ = "-"; }
+    | MUL           { $$ = "*"; }
+    | DIV           { $$ = "/"; }
+    | MOD           { $$ = "%"; }
 ;
 
-
-
 %%
+
 int main(int argc, char *argv[]) {
     extern FILE *yyin;
 
@@ -205,11 +237,8 @@ void same_tag(char *s1, char *s2) {
     }
 }
 
-string converterInt(int x, char* s1, char* s2){
+string converter(int x, char* s1, char* s2){
 
 }
 
-string converterFloat(int x, char* s1, char* s2){
-
-}
   
