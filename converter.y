@@ -336,7 +336,7 @@ char* converter(char* s1, char* s2){
           if(position2!=0){
              yyerror("no puede tener prefijo");
              return "";
-          else{   
+          }else{   
             quantity = escalate(quantity, tokens2[0], tokens2[1]);  
            } 
     }
