@@ -19,7 +19,7 @@ struct medidas distancia[4];
 distancia[0].nombre = "metro";
 distancia[0].conversion = 1;
 distancia[1].nombre = "yarda";
-distancia[1].conversion = 1.09
+distancia[1].conversion = 1.09;
 distancia[2].nombre = "pie";
 distancia[2].conversion = 3.28;
 distancia[3].nombre = "mile";
@@ -47,9 +47,9 @@ peso[3].nombre = "stone";
 peso[3].conversion = 0.00016;
 
 struct medidas capacidad[4];
-capacidad[0].nombre = "litro"
+capacidad[0].nombre = "litro";
 capacidad[0].conversion = 1;
-capacidad[1].nombre = "pinta"
+capacidad[1].nombre = "pinta";
 capacidad[1].conversion = 2.11;
 capacidad[2].nombre = "gallon";
 capacidad[2].conversion = 0.26;
@@ -106,8 +106,8 @@ operacion:
 
 
 unidad:
-    ud  {$$1}
-    | prefijo ud {strcat($$1, $$2)}
+    ud  {$1}
+    | prefijo ud {strcat($1, $2)}
 
 
 ud: 
@@ -271,10 +271,10 @@ bool same_tag(char *s1, char *s2) {
         return false;
     }
 
-    return true
+    return true;
 }
 
-string converter(char* s1, char* s2){
+char* converter(char* s1, char* s2){
 
     char *tokens1[5];  
     char *tokens2[4];
@@ -345,46 +345,29 @@ string converter(char* s1, char* s2){
 }
  
 
- char[] meassureType(char* s1){
-
-    switch(si){
-        case"dinero":
-            return monedas;
-            break;
-        case "peso";
-            return peso;
-            break;
-        case "capacidad":
-            return capacidades;
-            break;
-        case "distancia":
-            return distancias;
-            break;
-        default:
-            return NULL;
-    }
- }
+const char* meassureType(const char* s1) {
+    if (strcmp(s1, "dinero") == 0) return monedas;
+    if (strcmp(s1, "peso") == 0) return peso;
+    if (strcmp(s1, "capacidad") == 0) return capacidad;
+    if (strcmp(s1, "distancia") == 0) return distancia;
+    return NULL;
+}
 
  int meassureLevel(medidas[] levels, char* lev){
-    for(int i=0; i<levels.length; i++){
+    for(int i=0; i<4; i++){
         if(strcmp(levels[i].name, lev) == 0){
             return i;
             break;
         }
     }
  }
-
- float escale(float value, char* s1, char* s2){
+float escale(float value, const char* op, const char* s2) {
     float result;
-    switch(s1){
-        case "/":
-        result = (value / (atof(s2)));
-        break;
-        case "*":
-        result= (value * (atof(s2)));
-        break;
+    if (strcmp(op, "/") == 0) {
+        result = value / atof(s2);
+    } else if (strcmp(op, "*") == 0) {
+        result = value * atof(s2);
     }
     return result;
- }
-
+}
   
