@@ -77,10 +77,7 @@ void same_tag(char * s1, char * s2);
 %token OPE1 OPE2 ENTERO REAL PLUS MINUS MUL DIV MOD DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
 %token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
 %token MILI DECI CENTI DECA HECTO KILO 
-%token <valString>  
-%token <valFloat> 
-%token <valInt>  
-
+%token <valString>  conversion, operacion, unidad, ud , prefijo, listas cuenta,
 
 
 %start S
@@ -91,26 +88,14 @@ S:  OPE1 conversion {printf( "%d",$2)}
     ;
 
 conversion:
-    ENTERO unidad ARROW unidad {
-            if(same_tag($2, $4)) {
-                converter($1,$2,$4); // TODO FUNCION conversion
-
-                printf("Realizando conversión de %d %s a  %s\n", $1, $2, $4);
-            }
-
-
-        
-        //TODO FUNCIONES ver si ambas unidades son compatibles
-    }
-    | REAL unidad ARROW unidad {
-         if(same_tag($2, $4)) {
-             converter($1,$2,$4); // TODO FUNCIONES conversion
-                printf("Realizando conversión de %.2f %s a %s\n", $1, $2, $4);
-   
-         }
-
-    }
-    ;
+    miembro ARROW unidad {
+            if(same_tag($1, $3)) {
+                $$ = converter($1,$3); 
+                if (strcmp($$, "")!=0){
+                    printf("El resultado es %f %s", $$, $3);
+                }
+            }        
+    };
 
 operacion: 
  MEAN  lista  
@@ -152,6 +137,9 @@ prefijo:
     |HECTO          { $$ = "* 100 "}
     |KILO           { $$ = "* 1000 "}
 
+miembro:
+ENTERO unidad
+|REAL unidad
 
 lista:
    entero unidad
@@ -235,8 +223,8 @@ void print_errors() {
 }
 
 
-void same_tag(char *s1, char *s2) {
-    char *tokens1[4];  
+bool same_tag(char *s1, char *s2) {
+    char *tokens1[5];  
     char *tokens2[4];
     char *compare1; 
     char *compare2;
@@ -245,7 +233,7 @@ void same_tag(char *s1, char *s2) {
     int count2 = 0;
 
     char *token = strtok(s1, " ");
-    while (token != NULL && count1 < 4) {
+    while (token != NULL && count1 < 5) {
         tokens1[count1++] = token;
         token = strtok(NULL, " ");
     }
@@ -258,21 +246,21 @@ void same_tag(char *s1, char *s2) {
 
   
 
-    if (count1 == 2 && count2 == 2) {
-        compare1 = tokens1[0]; 
+    if (count1 == 3 && count2 == 2) {
+        compare1 = tokens1[1]; 
         compare2 = tokens2[0];  
-    } else if (count1 == 4 && count2 == 4) {
-        compare1 = tokens1[2];  
+    } else if (count1 == 5 && count2 == 4) {
+        compare1 = tokens1[3];  
         compare2 = tokens2[2];  
-    } else if (count1 == 2 && count2 == 4) {
-        compare1 = tokens1[0];  
+    } else if (count1 == 3 && count2 == 4) {
+        compare1 = tokens1[1];  
         compare2 = tokens2[2]; 
-    } else if (count1 == 4 && count2 == 2) {
-        compare1 = tokens1[2];  
+    } else if (count1 == 5 && count2 == 2) {
+        compare1 = tokens1[3];  
         compare2 = tokens2[0]; 
     } else {
         yyerror("Error: Formato no válido para las cadenas.\n");
-        return;
+        return false;
     }
 
     
@@ -280,12 +268,123 @@ void same_tag(char *s1, char *s2) {
         char error_msg[100];
         snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
         yyerror(error_msg);
-        return;
+        return false;
     }
+
+    return true
 }
 
-string converter(int x, char* s1, char* s2){
+string converter(char* s1, char* s2){
 
+    char *tokens1[5];  
+    char *tokens2[4];
+    char *compare1; 
+
+    int count1 = 0;
+    int position1;
+    int count2 = 0;
+    int position2;
+
+    float quantity;
+
+    struct medidas medida;
+
+    char *token = strtok(s1, " ");
+    while (token != NULL && count1 < 5) {
+        tokens1[count1++] = token;
+        token = strtok(NULL, " ");
+    }
+
+    token = strtok(s2, " ");
+    while (token != NULL && count2 < 4) {
+        tokens2[count2++] = token;
+        token = strtok(NULL, " ");
+    }
+
+    switch(count1) {
+        case 3;
+          medida = meassureType(tokens1[1]);   
+          position1 = meassureLevel(medida, tokens1[2]);
+          quantity = atof(tokens1[0]);
+          if(position1!=0){
+            quantity = quantity * levels[position1].conversion;
+          }
+
+        case 5;
+          medida = meassureType(tokens1[3]);
+          position1 = meassureLevel(medida, tokens1[4]); 
+          quantity = atof(tokens1[0]);
+
+          if(position1!=0 || (strcmp(token1[3], ""dinero")==0)){
+            yyerror("no puede tener prefijo");
+            return "";
+          }else{
+            quantity = escale(quantity, token1[1], token1[2]);
+          }
+          break;
+    }
+
+    switch(count2){
+        case 2;
+          position2 = meassureLevel(medida, tokens2[1]);
+          if(position2!=0){
+            quantity = quantity * levels[position2].conversion;
+            break;
+          }
+        case 4;
+        position2 = meassureLevel(medida, tokens2[3]);
+          if(position2!=0){
+             yyerror("no puede tener prefijo");
+             return "";
+          else{   
+            quantity = escalate(quantity, tokens2[0], tokens2[1]);  
+           } 
+    }
+
+    return to_string(quantity);
 }
+ 
+
+ char[] meassureType(char* s1){
+
+    switch(si){
+        case"dinero":
+            return monedas;
+            break;
+        case "peso";
+            return peso;
+            break;
+        case "capacidad":
+            return capacidades;
+            break;
+        case "distancia":
+            return distancias;
+            break;
+        default:
+            return NULL;
+    }
+ }
+
+ int meassureLevel(medidas[] levels, char* lev){
+    for(int i=0; i<levels.length; i++){
+        if(strcmp(levels[i].name, lev) == 0){
+            return i;
+            break;
+        }
+    }
+ }
+
+ float escale(float value, char* s1, char* s2){
+    float result;
+    switch(s1){
+        case "/":
+        result = (value / (atof(s2)));
+        break;
+        case "*":
+        result= (value * (atof(s2)));
+        break;
+    }
+    return result;
+ }
 
   
