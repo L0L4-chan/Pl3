@@ -8,12 +8,30 @@ struct er {
     int line;
 };
 
+struct op {
+    char op;
+    float first;
+    float second;
+    int prioridad;
+};
+
+struct op operaciones[100];
+
 struct medidas{
     char* nombre;
     float conversion
 }
 
+struct tokens {
+    char* token[5];
+    int contador;
+};
 
+struct tokens tk1;
+struct tokens tk2;
+
+struct er errores[100];
+int contador_errores = 0;
 
 struct medidas distancia[4];
 distancia[0].nombre = "metro";
@@ -59,7 +77,7 @@ capacidad[3].conversion = 0.0063;
 
 struct er errores[100];
 int error_count = 0;
-
+int priority[100];
 extern int yylex();
 extern int yylineno;
 
@@ -98,7 +116,7 @@ conversion:
     };
 
 operacion: 
- MEAN  lista  
+ MEAN  lista  {$$ = media(lista);}
  | MEDIAN lista
  | MODE lista
  | cuenta
@@ -142,22 +160,19 @@ ENTERO unidad
 |REAL unidad
 
 lista:
-   entero unidad
- | lista entero unidad 
- | float unidad
- | lista float unidad
+   miembro
+ | lista miembro
  ;
 
 cuenta: 
-entero unidad signo entero unidad {
+miembro signo miembro {  
 
-    if(same_tag($2, $5)) { // pendiente de hacer una variacion para operaciones 
-        converterOperacion($1, $2, $3, $4,$5); // TODO FUNCION operacion
+    if(same_tag($1, $3)) {  
+        $$ = oper($1, $2, $3); // TODO FUNCION operacion
     }
 }
-| cuenta signo entero unidad
+| cuenta signo miembro
 | cuenta signo float unidad
-| float unidad signo float unidad
 | LPAREN cuenta RPAREN
 
 
@@ -278,7 +293,8 @@ char* converter(char* s1, char* s2){
 
     char *tokens1[5];  
     char *tokens2[4];
-    char *compare1; 
+    char *compare1;
+    char *compare2; ; 
 
     int count1 = 0;
     int position1;
@@ -287,7 +303,7 @@ char* converter(char* s1, char* s2){
 
     float quantity;
 
-    struct medidas medida;
+    struct medidas medida[4];
 
     char *token = strtok(s1, " ");
     while (token != NULL && count1 < 5) {
@@ -343,8 +359,6 @@ char* converter(char* s1, char* s2){
 
     return to_string(quantity);
 }
- 
-
 const char* meassureType(const char* s1) {
     if (strcmp(s1, "dinero") == 0) return monedas;
     if (strcmp(s1, "peso") == 0) return peso;
@@ -370,4 +384,72 @@ float escale(float value, const char* op, const char* s2) {
     }
     return result;
 }
-  
+
+char* oper(char* s1, char s2, char* s3){
+    
+    char *tokens1[5];  
+    char *tokens2[5];
+
+    int count1 = 0;
+    int count2 = 0;
+
+    float first;
+    float second;
+
+    struct medidas medida[4];
+    
+    char *token = strtok(s1, " ");
+    while (token != NULL && count1 < 5) {
+        tokens1[count1++] = token;
+        token = strtok(NULL, " ");
+    }
+
+    token = strtok(s2, " ");
+    while (token != NULL && count2 < 4) {
+        tokens2[count2++] = token;
+        token = strtok(NULL, " ");
+    }
+
+    if(count1 == 3){
+        medidas = meassureType(token1[1]); 
+        position1 = meassureLevel(medida, tokens1[2]);
+        first = atof(tokens1[0]);
+        if(position1!=0){
+            quantity = quantity * levels[position1].conversion;
+        }
+
+    }else{
+        medidas = meassureType(tokens1[3]);
+        position1 = meassureLevel(medida, tokens1[4]); 
+        first = atof(tokens1[0]);
+        if(position1!=0 || (strcmp(token1[3], ""dinero")==0)){
+           yyerror("no puede tener prefijo");
+           return "";
+        }else{
+            first = escale(quantity, token1[1], token1[2]);
+        }
+    }
+
+    if(count2 == 3){
+        medidas = meassureType(token2[1]); 
+        position2 = meassureLevel(medida, tokens2[2]);
+        second = atof(tokens2[0]);
+        if(position2!=0){
+            quantity = quantity * levels[position2].conversion;
+        }
+
+    }else{
+        medidas = meassureType(tokens2[3]);
+        position2 = meassureLevel(medida, tokens2[4]); 
+        first = atof(tokens2[0]);
+        if(position2!=0 || (strcmp(token2[3], ""dinero")==0)){
+           yyerror("no puede tener prefijo");
+           return "";
+        }else{
+            first = escale(quantity, token2[1], token2[2]);
+        }
+
+        
+                
+    } 
+} 
