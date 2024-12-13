@@ -28,16 +28,16 @@ void print_errors();
 
 
 tokens dameTokens(char * s1);
-bool same_ud_conv(token * s1, char * s2);
-bool same_ud_oper(token * s1, token * s2);
+bool same_ud_conv(tokens * s1, char * s2);
+bool same_ud_oper(tokens * s1, tokens * s2);
 const char* meassureType(const char* s1);
 int meassureLevel(medidas[] levels, char* lev);
 float pasar_ud_base(float value, const char* op, const char* s2);
 float pasar_ud_final(float value, const char* op, const char* s2);
 char* prefijo (char * s1, char * s2);
-char * convertir(token * s1, char * s2);
-token operacion_prioritaria(token s1, token s2, char signo);
-char * token_string(token s1);
+char * convertir(tokens * s1, char * s2);
+tokens operacion_prioritaria(tokens s1, tokens s2, char signo);
+char * token_string(tokens s1);
 
 struct medidas distancia[4];
 distancia[0].nombre = "metro";
@@ -84,7 +84,7 @@ capacidad[3].conversion = 0.0063;
 
 %union {
     char * valString;
-    token * valToken;
+    tokens * valToken;
     int valInt;
     float valfloat;
 }
@@ -267,9 +267,9 @@ tokens dameTokens(char * s1){
 }
 
 
-bool same_ud_conv(token * s1, char * s2) {
+bool same_ud_conv(tokens * s1, char * s2) {
 
-    token unidad = dameTokens(s2)
+    tokens unidad = dameTokens(s2)
     char * compare1;
     char * compare2;
 
@@ -300,7 +300,7 @@ bool same_ud_conv(token * s1, char * s2) {
     return true;
 }
 
-bool same_ud_oper(token * s1, token * s2) {
+bool same_ud_oper(tokens * s1, tokens * s2) {
 
     char * compare1;
     char * compare2;
@@ -386,9 +386,9 @@ char* prefijo (char * s1, char * s2){
 }
 
 
-char * convertir(token * s1, char * s2){
+char * convertir(tokens * s1, char * s2){
 
-    token unidad = dameTokens(s2)
+    tokens unidad = dameTokens(s2)
     char * compare1;
     char * compare2;
 
@@ -451,7 +451,7 @@ char * convertir(token * s1, char * s2){
 
 token operacion_prioritaria(token s1, token s2, char signo) {
 
-    token miembro;  
+    tokens miembro;  
     int position1;
     int position2;
     float quantity1;
