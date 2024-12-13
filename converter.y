@@ -32,7 +32,7 @@ struct tokens dameTokens(char * s1);
 bool same_ud_conv(struct tokens * s1, char * s2);
 bool same_ud_oper(struct tokens * s1, struct tokens * s2);
 const char* meassureType(const char* s1);
-int meassureLevel(struct medidas[] levels, char* lev);
+int meassureLevel(struct medidas* levels, char* lev);
 float pasar_ud_base(float value, const char* op, const char* s2);
 float pasar_ud_final(float value, const char* op, const char* s2);
 char* prefijo (char * s1, char * s2);
@@ -40,47 +40,33 @@ char * convertir(struct tokens * s1, char * s2);
 struct tokens operacion_prioritaria(struct tokens s1, struct tokens s2, char signo);
 char * token_string(struct tokens s1);
 
-struct medidas distancia[4];
-distancia[0].nombre = "metro";
-distancia[0].conversion = 1;
-distancia[1].nombre = "yarda";
-distancia[1].conversion = 1.09;
-distancia[2].nombre = "pie";
-distancia[2].conversion = 3.28;
-distancia[3].nombre = "mile";
-distancia[3].conversion = 0.00062;
+struct medidas distancia[4] = {
+    {"metro", 1},
+    {"yarda", 1.09},
+    {"pie", 3.28},
+    {"mile", 0.00062}
+};
 
-struct medidas monedas[4];
-monedas[0].nombre = "euro";
-monedas[0].conversion = 1;
-monedas[1].nombre = "dolar";
-monedas[1].conversion = 1.05;
-monedas[2].nombre = "gbp";
-monedas[2].conversion = 0.83;
-monedas[3].nombre = "yen";
-monedas[3].conversion = 156.67;
+struct medidas monedas[4] = {
+    {"euro", 1},
+    {"dolar", 1.05},
+    {"gbp", 0.83},
+    {"yen", 156.67}
+};
 
+struct medidas peso[4] = {
+    {"gramo", 1},
+    {"pound", 0.0022},
+    {"onza", 0.035},
+    {"stone", 0.00016}
+};
 
-struct medidas peso[4];
-peso[0].nombre = "gramo";
-peso[0].conversion = 1;
-peso[1].nombre = "pound";
-peso[1].conversion = 0.0022;
-peso[2].nombre = "onza";
-peso[2].conversion = 0.035;
-peso[3].nombre = "stone";
-peso[3].conversion = 0.00016;
-
-struct medidas capacidad[4];
-capacidad[0].nombre = "litro";
-capacidad[0].conversion = 1;
-capacidad[1].nombre = "pinta";
-capacidad[1].conversion = 2.11;
-capacidad[2].nombre = "gallon";
-capacidad[2].conversion = 0.26;
-capacidad[3].nombre = "barril";
-capacidad[3].conversion = 0.0063;
-
+struct medidas capacidad[4] = {
+    {"litro", 1},
+    {"pinta", 2.11},
+    {"gallon", 0.26},
+    {"barril", 0.0063}
+};
 %}
 
 %union {
@@ -270,7 +256,7 @@ struct tokens dameTokens(char * s1){
 
 bool same_ud_conv(struct tokens * s1, char * s2) {
 
-    struct tokens unidad = dameTokens(s2)
+    struct tokens unidad = dameTokens(s2);
     char * compare1;
     char * compare2;
 
@@ -341,7 +327,7 @@ const char* meassureType(const char* s1) {
     return NULL;
 }
 
- int meassureLevel(struct medidas[] levels, char* lev){
+ int meassureLevel(struct medidas * levels, char* lev){
     for(int i=0; i<4; i++){
         if(strcmp(levels[i].name, lev) == 0){
             return i;
