@@ -90,8 +90,8 @@ capacidad[3].conversion = 0.0063;
 %token OPE1 OPE2 ENTERO REAL PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
 %token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
 %token MILI DECI CENTI DECA HECTO KILO 
-%token <valString>  conversion unidad ud prefijo operacion 
-%token <valToken> miembro cuenta factor termino
+%type <valString>  conversion unidad ud prefijo operacion 
+%type <valToken> miembro cuenta factor termino
 
 %start S
 
