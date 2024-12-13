@@ -85,13 +85,18 @@ capacidad[3].conversion = 0.0063;
 %union {
     char * valString;
     token * valToken;
+    int valInt;
+    float valfloat;
 }
 
-%token OPE1 OPE2 ENTERO REAL PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
+%token <valInt> ENTERO
+%token <valfloat> REAL
+%token OPE1 OPE2 PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
 %token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
 %token MILI DECI CENTI DECA HECTO KILO 
 %type <valString>  conversion unidad ud prefijo operacion 
 %type <valToken> miembro cuenta factor termino
+
 
 %start S
 
@@ -110,28 +115,26 @@ S:  OPE1 conversion {
 
 conversion:
     miembro ARROW unidad {
-        if (same_ud_conv($1, $2))
-            if(con)
-            $$ = convertir($1, $2);
+        if (same_ud_conv($1, $3)){$$ = convertir($1, $3);}
     }
 ;
 
 
 miembro:
     ENTERO unidad {
-        strcat($1, $2);
+        strcat(to_string($1), $2);
         $$ = dameTokens($1);
         }
     |REAL unidad {
-        strcat($1, $2);
+        strcat(to_string($1), $2);
         $$ = dameTokens($1);
         }
     ;
 
 unidad:
     ud              {$1}
-    | prefijo ud    {strcat($1, $2)}
-    ;
+    | prefijo ud    {strcat($1, $2);}
+;
 
 
 ud: 
@@ -163,28 +166,26 @@ prefijo:
 
 
 operacion: 
-    MEAN  lista        {$$ = media(lista);}
-    | MEDIAN lista     {$$ = mediana(lista);}
-    | MODE lista       {$$ = moda(lista);}
-    | cuenta           {$$ = token_string($1)}      
+     cuenta           {$$ = token_string($1)}      
 ;
 
 cuenta: 
     cuenta PLUS termino{
-        $$ = operacion_prioritaria($1, $3, "+")
+        $$ = operacion_prioritaria($1, $3, "+");
     }
     |cuenta MINUS termino{
-        $$ = operacion_prioritaria($1, $3, "-")
+        $$ = operacion_prioritaria($1, $3, "-");
     }
-    | termino
+    | termino                              {$1}
 ;
 
 termino: 
     termino MUL factor {
-        $$ = operacion_prioritaria($1, $3, "*")
+        $$ = operacion_prioritaria($1, $3, "*");
     }
-    |termino DIV factor
-        $$ = operacion_prioritaria($1, $3, "/")
+    |termino DIV factor{
+        $$ = operacion_prioritaria($1, $3, "/");
+        }
     |factor                 {$1}
 ;
 
