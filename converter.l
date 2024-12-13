@@ -47,7 +47,6 @@ real                  {yylval.valFloat = atof(yytext); return REAL;}
 "-"                   {return MINUS;}
 "*"                   {return MUL;}
 "/"                   {return DIV;}
-"%"                   {return MOD;}
 "("                   {return LPAREN;}
 ")"                   {return RPAREN;}
 "->"                  {return ARROW;}

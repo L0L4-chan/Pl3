@@ -3,24 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-struct medidas{
-    char* nombre;
-    float conversion
-};
-
-struct medidas distancia[4];
-struct medidas monedas[4];
-struct medidas peso[4];
-struct medidas capacidad[4];
-
 struct er {
     char* type; 
     int line;
 };
-
-
-struct op operaciones[100];
 
 struct op {
     char op;
@@ -28,6 +14,13 @@ struct op {
     float second;
     int prioridad;
 };
+
+struct op operaciones[100];
+
+struct medidas{
+    char* nombre;
+    float conversion
+}
 
 struct tokens {
     char* token[5];
@@ -37,49 +30,62 @@ struct tokens {
 struct tokens tk1;
 struct tokens tk2;
 
-
 struct er errores[100];
 int contador_errores = 0;
+
+
+
+
+struct er errores[100];
 int error_count = 0;
 int priority[100];
-
 extern int yylex();
 extern int yylineno;
 
 void yyerror(const char *s);
 void print_errors();
 void same_tag(char * s1, char * s2);
-float converter(const char *s1, const char *s2);
-struct medidas* meassureType(const char *type);
-int meassureLevel(struct medidas* levels, const char* unit);
-float escale(float value, const char* op, const char* factor);
 
-void inicializar_medidas() {
-    // Inicializar distancia
-    distancia[0] = (struct medidas){"metro", 1};
-    distancia[1] = (struct medidas){"yarda", 1.09};
-    distancia[2] = (struct medidas){"pie", 3.28};
-    distancia[3] = (struct medidas){"mile", 0.00062};
+struct medidas distancia[4];
+distancia[0].nombre = "metro";
+distancia[0].conversion = 1;
+distancia[1].nombre = "yarda";
+distancia[1].conversion = 1.09;
+distancia[2].nombre = "pie";
+distancia[2].conversion = 3.28;
+distancia[3].nombre = "mile";
+distancia[3].conversion = 0.00062;
 
-    // Inicializar monedas
-    monedas[0] = (struct medidas){"euro", 1};
-    monedas[1] = (struct medidas){"dolar", 1.05};
-    monedas[2] = (struct medidas){"gbp", 0.83};
-    monedas[3] = (struct medidas){"yen", 156.67};
+struct medidas monedas[4];
+monedas[0].nombre = "euro";
+monedas[0].conversion = 1;
+monedas[1].nombre = "dolar";
+monedas[1].conversion = 1.05;
+monedas[2].nombre = "gbp";
+monedas[2].conversion = 0.83;
+monedas[3].nombre = "yen";
+monedas[3].conversion = 156.67;
 
-    // Inicializar peso
-    peso[0] = (struct medidas){"gramo", 1};
-    peso[1] = (struct medidas){"pound", 0.0022};
-    peso[2] = (struct medidas){"onza", 0.035};
-    peso[3] = (struct medidas){"stone", 0.00016};
 
-    // Inicializar capacidad
-    capacidad[0] = (struct medidas){"litro", 1};
-    capacidad[1] = (struct medidas){"pinta", 2.11};
-    capacidad[2] = (struct medidas){"gallon", 0.26};
-    capacidad[3] = (struct medidas){"barril", 0.0063};
-}
+struct medidas peso[4];
+peso[0].nombre = "gramo";
+peso[0].conversion = 1;
+peso[1].nombre = "pound";
+peso[1].conversion = 0.0022;
+peso[2].nombre = "onza";
+peso[2].conversion = 0.035;
+peso[3].nombre = "stone";
+peso[3].conversion = 0.00016;
 
+struct medidas capacidad[4];
+capacidad[0].nombre = "litro";
+capacidad[0].conversion = 1;
+capacidad[1].nombre = "pinta";
+capacidad[1].conversion = 2.11;
+capacidad[2].nombre = "gallon";
+capacidad[2].conversion = 0.26;
+capacidad[3].nombre = "barril";
+capacidad[3].conversion = 0.0063;
 %}
 
 %union {
@@ -97,8 +103,8 @@ void inicializar_medidas() {
 %start S
 %%
 
-S:  OPE1 conversion { printf("Resultado de la conversión: %.2f\n", $2); }
-    | OPE2 operacion { printf("Resultado de la operación: %.2f\n", $2); }
+S:  OPE1 conversion {printf( "%d",$2)}
+    | OPE2 operacion {printf( "%d",$2)}
     ;
 
 conversion:
@@ -111,17 +117,17 @@ conversion:
             }        
     };
 
-operacion:
-      MEAN lista { $$ = calcular_media($2); }
-    | MEDIAN lista { $$ = calcular_mediana($2); }
-    | MODE lista { $$ = calcular_moda($2); }
-    | cuenta { $$ = $1; }
-    ;
+operacion: 
+ MEAN  lista  {$$ = media(lista);}
+ | MEDIAN lista
+ | MODE lista
+ | cuenta
+ ;
 
 
 unidad:
-    ud              {$$ = $1;}
-    | prefijo ud    {strcat($1, $2)}
+    ud  {$1}
+    | prefijo ud {strcat($1, $2)}
 
 
 ud: 
@@ -144,7 +150,7 @@ ud:
 
 
 prefijo:
-    MILI            { $$ = "/ 1000 "}
+    MILO            { $$ = "/ 1000 "}
     |DECI           { $$ = "/ 10 "}
     |CENTI          { $$ = "/ 100 "}
     |DECA           { $$ = "* 10 "}
@@ -152,16 +158,13 @@ prefijo:
     |KILO           { $$ = "* 1000 "}
 
 miembro:
-    ENTERO unidad   { $$ = atof($1); }
-  | REAL unidad     { $$ = atof($1); }
-  | ENTERO          { $$ = atof($1); }
-  | REAL            { $$ = atof($1); }
-  ;
+ENTERO unidad
+|REAL unidad
 
 lista:
-    miembro            { $$ = $1; }
-  | lista miembro      { $$ = $1 + $2; }
-  ;
+   miembro
+ | lista miembro
+ ;
 
 cuenta: 
 miembro signo miembro {  
@@ -288,26 +291,76 @@ bool same_tag(char *s1, char *s2) {
     return true;
 }
 
-float converter(const char* s1, const char* s2) {
-    struct medidas* medida = meassureType(s1);
-    if (!medida) {
-        yyerror("Tipo de medida no encontrado.");
-        return -1;
+char* converter(char* s1, char* s2){
+
+    char *tokens1[5];  
+    char *tokens2[4];
+    char *compare1;
+    char *compare2; ; 
+
+    int count1 = 0;
+    int position1;
+    int count2 = 0;
+    int position2;
+
+    float quantity;
+
+    struct medidas medida[4];
+
+    char *token = strtok(s1, " ");
+    while (token != NULL && count1 < 5) {
+        tokens1[count1++] = token;
+        token = strtok(NULL, " ");
     }
 
-    int pos1 = meassureLevel(medida, s1);
-    int pos2 = meassureLevel(medida, s2);
-
-    if (pos1 == -1 || pos2 == -1) {
-        yyerror("Unidad no reconocida.");
-        return -1;
+    token = strtok(s2, " ");
+    while (token != NULL && count2 < 4) {
+        tokens2[count2++] = token;
+        token = strtok(NULL, " ");
     }
 
-    float factor = medida[pos2].conversion / medida[pos1].conversion;
-    return factor;
+    switch(count1) {
+        case 3;
+          medida = meassureType(tokens1[1]);   
+          position1 = meassureLevel(medida, tokens1[2]);
+          quantity = atof(tokens1[0]);
+          if(position1!=0){
+            quantity = quantity * levels[position1].conversion;
+          }
+
+        case 5;
+          medida = meassureType(tokens1[3]);
+          position1 = meassureLevel(medida, tokens1[4]); 
+          quantity = atof(tokens1[0]);
+
+          if(position1!=0 || (strcmp(token1[3], ""dinero")==0)){
+            yyerror("no puede tener prefijo");
+            return "";
+          }else{
+            quantity = escale(quantity, token1[1], token1[2]);
+          }
+          break;
+    }
+
+    switch(count2){
+        case 2;
+          position2 = meassureLevel(medida, tokens2[1]);
+          if(position2!=0){
+            quantity = quantity * levels[position2].conversion;
+            break;
+          }
+        case 4;
+        position2 = meassureLevel(medida, tokens2[3]);
+          if(position2!=0){
+             yyerror("no puede tener prefijo");
+             return "";
+          }else{   
+            quantity = escalate(quantity, tokens2[0], tokens2[1]);  
+           } 
+    }
+
+    return to_string(quantity);
 }
-
-
 const char* meassureType(const char* s1) {
     if (strcmp(s1, "dinero") == 0) return monedas;
     if (strcmp(s1, "peso") == 0) return peso;
@@ -316,7 +369,7 @@ const char* meassureType(const char* s1) {
     return NULL;
 }
 
- int meassureLevel(struct medidas* levels, char* lev){
+ int meassureLevel(medidas[] levels, char* lev){
     for(int i=0; i<4; i++){
         if(strcmp(levels[i].name, lev) == 0){
             return i;
@@ -324,7 +377,6 @@ const char* meassureType(const char* s1) {
         }
     }
  }
-
 float escale(float value, const char* op, const char* s2) {
     float result;
     if (strcmp(op, "/") == 0) {
