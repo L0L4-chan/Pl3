@@ -415,7 +415,7 @@ char * convertir(token * s1, char * s2){
             position1 = meassureLevel(medida, s1.token[4]);
             quantity = atof(s1.token[0]);
 
-            if(position1!=0 || (strcmp(s1.token[3], ""dinero")==0)){
+            if(position1!=0 || (strcmp(s1.token[3], "dinero")==0)){
                 yyerror("no puede tener prefijo");
                 return "";
             }else{
@@ -479,7 +479,7 @@ token operacion_prioritaria(token s1, token s2, char signo) {
                 position1 = meassureLevel(medida, s1.token[4]);
                 quantity1 = atof(s1.token[0]);
 
-                if(position1!=0 || (strcmp(s1.token[3], ""dinero")==0)){
+                if(position1!=0 || (strcmp(s1.token[3], "dinero")==0)){
                     yyerror("no puede tener prefijo");
                     return "";
                 }else{
@@ -508,7 +508,7 @@ token operacion_prioritaria(token s1, token s2, char signo) {
                 position2 = meassureLevel(medida, s2.token[4]);
                 quantity2 = atof(s2.token[0]);
 
-                if(position2!=0 || (strcmp(s2.token[3], ""dinero")==0)){
+                if(position2!=0 || (strcmp(s2.token[3], "dinero")==0)){
                     yyerror("no puede tener prefijo");
                     return "";
                 }else{
