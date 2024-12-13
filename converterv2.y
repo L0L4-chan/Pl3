@@ -98,7 +98,10 @@ S:  OPE1 conversion {
     if (strcmp ($2, "")!=0)
         printf("El resultado de la conversión es: %s",$2);
     }
-    | OPE2 operacion {printf( "%d",$2)}
+    | OPE2 operacion {
+        if (strcmp ($2, "")!=0)
+            printf("El resultado de la operación es: %s",$2);
+    }
 ;
 
 
@@ -160,12 +163,16 @@ operacion:
     MEAN  lista        {$$ = media(lista);}
     | MEDIAN lista     {$$ = mediana(lista);}
     | MODE lista       {$$ = moda(lista);}
-    | cuenta           
+    | cuenta           {$$ = token_string($1)}      
 ;
 
 cuenta: 
-    cuenta PLUS termino
-    |cuenta MINUS termino
+    cuenta PLUS termino{
+        $$ = operacion_prioritaria($1, $3, "+")
+    }
+    |cuenta MINUS termino{
+        $$ = operacion_prioritaria($1, $3, "-")
+    }
     | termino
 ;
 
@@ -390,47 +397,48 @@ char * convertir(token * s1, char * s2){
 
 
     switch(s1.contador) {
-        case 3;
-          medida = meassureType(s1.token[1]);   
-          position1 = meassureLevel(medida, s1.token[2]);
-          quantity = atof(s1.token[0]);
+        case 3:
+            medida = meassureType(s1.token[1]);   
+            position1 = meassureLevel(medida, s1.token[2]);
+            quantity = atof(s1.token[0]);
 
-          if(position1!=0){
-            quantity = quantity * medida[position1].conversion;
-          }
+            if(position1!=0){
+                quantity = quantity * medida[position1].conversion;
+            }
+            break;
 
-        case 5;
-          medida = meassureType(s1.token[3]);  
-          position1 = meassureLevel(medida, s1.token[4]);
-          quantity = atof(s1.token[0]);
+        case 5:
+            medida = meassureType(s1.token[3]);  
+            position1 = meassureLevel(medida, s1.token[4]);
+            quantity = atof(s1.token[0]);
 
-          if(position1!=0 || (strcmp(s1.token[3], ""dinero")==0)){
-            yyerror("no puede tener prefijo");
-            return "";
-          }else{
-            quantity = pasar_ud_base(quantity, s1.token[1], s1.token[2]);
-          }
-          break;
+            if(position1!=0 || (strcmp(s1.token[3], ""dinero")==0)){
+                yyerror("no puede tener prefijo");
+                return "";
+            }else{
+                quantity = pasar_ud_base(quantity, s1.token[1], s1.token[2]);
+            }
+            break;
     }
 
     switch(unidad.contador){
-        case 2;
-          position2 = meassureLevel(medida, unidad.token[1]);
-          if(position2!=0){
-            quantity = quantity * medida[position2].conversion;
-            resultado = to_string (strcat(quantity,unidad.token[1]))
+        case 2:
+            position2 = meassureLevel(medida, unidad.token[1]);
+            if(position2!=0){
+                quantity = quantity * medida[position2].conversion;
+                resultado = to_string (strcat(quantity,unidad.token[1]))
+                break;
+            }
+        case 4:
+            position2 = meassureLevel(medida, unidad.token[3]);
+            if(position2!=0){
+                yyerror("no puede tener prefijo");
+                return "";
+            }else{   
+                quantity = pasar_ud_final(quantity, unidad.token[0], unidad.token[1]); 
+                resultado = to_string (strcat(quantity,strcat(prefijo(unidad.token[0], unidad.token[1]),unidad.token[3])))
+            } 
             break;
-          }
-        case 4;
-        position2 = meassureLevel(medida, unidad.token[3]);
-          if(position2!=0){
-             yyerror("no puede tener prefijo");
-             return "";
-          }else{   
-            quantity = pasar_ud_final(quantity, unidad.token[0], unidad.token[1]); 
-            resultado = to_string (strcat(quantity,strcat(prefijo(unidad.token[0], unidad.token[1]),unidad.token[3])))
-           } 
-           break;
         
     }
 
@@ -438,10 +446,126 @@ char * convertir(token * s1, char * s2){
 }
 
 token operacion_prioritaria(token s1, token s2, char signo) {
-    token miembro1[5];  
-    token miembro2[5];  
 
-    if (same_ud_oper(s1, s2))
-        
+    token miembro;  
+    int position1;
+    int position2;
+    float quantity1;
+    float quantity2;
+    struct medidas medida[4];
+    float resultado;
+    char * resultado_char;
+    char unidad_resultado[4];
 
+    if (same_ud_oper(s1, s2)){
+        switch(s1.contador) {
+            case 3:
+                medida = meassureType(s1.token[1]);   
+                position1 = meassureLevel(medida, s1.token[2]);
+                quantity1 = atof(s1.token[0]);
+
+                if(position1!=0){
+                    quantity1 = quantity1 * medida[position1].conversion;
+                }
+                unidad_resultado[0] = s1.token[1];
+                unidad_resultado[1] = s1.token[2];
+                break;
+
+            case 5:
+                medida = meassureType(s1.token[3]);  
+                position1 = meassureLevel(medida, s1.token[4]);
+                quantity1 = atof(s1.token[0]);
+
+                if(position1!=0 || (strcmp(s1.token[3], ""dinero")==0)){
+                    yyerror("no puede tener prefijo");
+                    return "";
+                }else{
+                    quantity1 = pasar_ud_base(quantity1, s1.token[1], s1.token[2]);
+                }
+                unidad_resultado[0] = s1.token[1];
+                unidad_resultado[1] = s1.token[2];
+                unidad_resultado[2] = s1.token[3];
+                unidad_resultado[3] = s1.token[4];
+
+                break;
+        }
+
+        switch(s2.contador) {
+            case 3:
+                medida = meassureType(s2.token[1]);   
+                position2 = meassureLevel(medida, s2.token[2]);
+                quantity2 = atof(s1.token[0]);
+
+                if(position1!=0){
+                    quantity2 = quantity2 * medida[position2].conversion;
+                }
+
+            case 5:
+                medida = meassureType(s2.token[3]);  
+                position2 = meassureLevel(medida, s2.token[4]);
+                quantity2 = atof(s2.token[0]);
+
+                if(position2!=0 || (strcmp(s2.token[3], ""dinero")==0)){
+                    yyerror("no puede tener prefijo");
+                    return "";
+                }else{
+                    quantity2 = pasar_ud_base(quantity2, s2.token[1], s2.token[2]);
+                }
+
+            break;
+        }
+
+        switch(signo) {
+            case "+":
+                resultado = quantity1 + quantity2;
+                break;
+            case "-":
+                resultado = quantity1 - quantity2;
+                break;
+            case "*":
+                resultado = quantity1 * quantity2;
+                break;
+            case "/":
+                resultado = quantity1 / quantity2;
+                break;
+        }
+
+        if (unidad_resultado[2]==NULL && unidad_resultado[3]==NULL){
+            if(position1!=0){
+            resultado = resultado * medida[position1].conversion;
+          }
+            resultado_char = to_string(resultado);
+            resultado_char = strcat (resultado_char, " ");
+            resultado_char = strcat (resultado_char, unidad_resultado[0]);
+            resultado_char = strcat (resultado_char, " ");
+            resultado_char = strcat (resultado_char, unidad_resultado[1]);
+            miembro = dameTokens(resultado_char);
+        }
+        else {
+            resultado = pasar_ud_final(resultado, unidad_resultado[2], unidad_resultado[3]);
+            resultado_char = to_string(resultado);
+            resultado_char = strcat (resultado_char, " ");
+            resultado_char = strcat (resultado_char, unidad_resultado[0]);
+            resultado_char = strcat (resultado_char, " ");
+            resultado_char = strcat (resultado_char, unidad_resultado[1]);
+            resultado_char = strcat (resultado_char, " ");
+            resultado_char = strcat (resultado_char, unidad_resultado[2]);
+            resultado_char = strcat (resultado_char, " ");
+            resultado_char = strcat (resultado_char, unidad_resultado[3]);
+            miembro = dameTokens(resultado_char);
+        }
+    }
+    return miembro
+}
+
+char * token_string(token s1){
+
+    if (s1.contador == 3){
+        return strcat(s1.token[0],s1.token[2]);
+    }
+    else if (s1.contador == 5){
+        char * prefix = prefijo(s1.token[1], s1.token[2]);
+        char * respuesta = strcat(s1.token[0], prefix);
+        respuesta = strcat(respuesta, s1.token[3]);
+    }
 }
