@@ -141,12 +141,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 85 "converter.y"
+#line 86 "converter.y"
 
     char * valString;
-    token * valToken;
+    struct tokens * valToken;
     int valInt;
-    float valfloat;
+    float valFloat;
 
 #line 152 "converter.tab.h"
 

@@ -72,6 +72,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 struct er {
     char* type; 
@@ -80,8 +81,8 @@ struct er {
 
 struct medidas{
     char* nombre;
-    float conversion
-}
+    float conversion;
+};
 
 struct tokens {
     char* token[5];
@@ -97,17 +98,17 @@ void yyerror(const char *s);
 void print_errors();
 
 
-tokens dameTokens(char * s1);
-bool same_ud_conv(token * s1, char * s2);
-bool same_ud_oper(token * s1, token * s2);
+struct tokens dameTokens(char * s1);
+bool same_ud_conv(struct tokens * s1, char * s2);
+bool same_ud_oper(struct tokens * s1, struct tokens * s2);
 const char* meassureType(const char* s1);
 int meassureLevel(medidas[] levels, char* lev);
 float pasar_ud_base(float value, const char* op, const char* s2);
 float pasar_ud_final(float value, const char* op, const char* s2);
 char* prefijo (char * s1, char * s2);
-char * convertir(token * s1, char * s2);
-token operacion_prioritaria(token s1, token s2, char signo);
-char * token_string(token s1);
+char * convertir(struct tokens * s1, char * s2);
+struct tokens operacion_prioritaria(struct tokens s1, struct tokens s2, char signo);
+char * token_string(struct tokens s1);
 
 struct medidas distancia[4];
 distancia[0].nombre = "metro";
@@ -151,7 +152,7 @@ capacidad[3].nombre = "barril";
 capacidad[3].conversion = 0.0063;
 
 
-#line 155 "converter.tab.c"
+#line 156 "converter.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -619,10 +620,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   105,   105,   109,   117,   124,   128,   135,   136,   141,
-     142,   143,   144,   145,   146,   147,   148,   149,   150,   151,
-     152,   153,   154,   155,   156,   160,   161,   162,   163,   164,
-     165,   169,   173,   176,   179,   183,   186,   189,   193,   194
+       0,   106,   106,   110,   118,   125,   129,   136,   137,   142,
+     143,   144,   145,   146,   147,   148,   149,   150,   151,   152,
+     153,   154,   155,   156,   157,   161,   162,   163,   164,   165,
+     166,   170,   174,   177,   180,   184,   187,   190,   194,   195
 };
 #endif
 
@@ -1219,257 +1220,257 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* S: OPE1 conversion  */
-#line 105 "converter.y"
+#line 106 "converter.y"
                     {
     if (strcmp ((yyvsp[0].valString), "")!=0)
         printf("El resultado de la conversión es: %s",(yyvsp[0].valString));
     }
-#line 1228 "converter.tab.c"
+#line 1229 "converter.tab.c"
     break;
 
   case 3: /* S: OPE2 operacion  */
-#line 109 "converter.y"
+#line 110 "converter.y"
                      {
         if (strcmp ((yyvsp[0].valString), "")!=0)
             printf("El resultado de la operación es: %s",(yyvsp[0].valString));
     }
-#line 1237 "converter.tab.c"
+#line 1238 "converter.tab.c"
     break;
 
   case 4: /* conversion: miembro ARROW unidad  */
-#line 117 "converter.y"
+#line 118 "converter.y"
                          {
         if (same_ud_conv((yyvsp[-2].valToken), (yyvsp[0].valString))){(yyval.valString) = convertir((yyvsp[-2].valToken), (yyvsp[0].valString));}
     }
-#line 1245 "converter.tab.c"
+#line 1246 "converter.tab.c"
     break;
 
   case 5: /* miembro: ENTERO unidad  */
-#line 124 "converter.y"
+#line 125 "converter.y"
                   {
-        strcat(to_string((yyvsp[-1].valInt)), (yyvsp[0].valString));
-        (yyval.valToken) = dameTokens((yyvsp[-1].valInt));
+        char * aux = strcat(to_string((yyvsp[-1].valInt)), (yyvsp[0].valString));
+        (yyval.valToken) = dameTokens(aux);
         }
-#line 1254 "converter.tab.c"
+#line 1255 "converter.tab.c"
     break;
 
   case 6: /* miembro: REAL unidad  */
-#line 128 "converter.y"
+#line 129 "converter.y"
                  {
-        strcat(to_string((yyvsp[-1].valfloat)), (yyvsp[0].valString));
-        (yyval.valToken) = dameTokens((yyvsp[-1].valfloat));
+        char * aux =strcat(to_string((yyvsp[-1].valFloat)), (yyvsp[0].valString));
+        (yyval.valToken) = dameTokens(aux);
         }
-#line 1263 "converter.tab.c"
+#line 1264 "converter.tab.c"
     break;
 
   case 7: /* unidad: ud  */
-#line 135 "converter.y"
-                    {(yyvsp[0].valString)}
-#line 1269 "converter.tab.c"
+#line 136 "converter.y"
+                    {(yyvsp[0].valString);}
+#line 1270 "converter.tab.c"
     break;
 
   case 8: /* unidad: prefijo ud  */
-#line 136 "converter.y"
+#line 137 "converter.y"
                     {strcat((yyvsp[-1].valString), (yyvsp[0].valString));}
-#line 1275 "converter.tab.c"
+#line 1276 "converter.tab.c"
     break;
 
   case 9: /* ud: YEN  */
-#line 141 "converter.y"
-                    { (yyval.valString) = "dinero yen "}
-#line 1281 "converter.tab.c"
+#line 142 "converter.y"
+                    { (yyval.valString) = "dinero yen ";}
+#line 1282 "converter.tab.c"
     break;
 
   case 10: /* ud: GBP  */
-#line 142 "converter.y"
-                    { (yyval.valString) = "dinero gbp "}
-#line 1287 "converter.tab.c"
+#line 143 "converter.y"
+                    { (yyval.valString) = "dinero gbp ";}
+#line 1288 "converter.tab.c"
     break;
 
   case 11: /* ud: DOLLAR  */
-#line 143 "converter.y"
-                    { (yyval.valString) = "dinero dollar" }
-#line 1293 "converter.tab.c"
+#line 144 "converter.y"
+                    { (yyval.valString) = "dinero dollar"; }
+#line 1294 "converter.tab.c"
     break;
 
   case 12: /* ud: EURO  */
-#line 144 "converter.y"
-                    { (yyval.valString) = "dinero euro "}
-#line 1299 "converter.tab.c"
+#line 145 "converter.y"
+                    { (yyval.valString) = "dinero euro ";}
+#line 1300 "converter.tab.c"
     break;
 
   case 13: /* ud: GRAMO  */
-#line 145 "converter.y"
-                    { (yyval.valString) = "peso gr "}
-#line 1305 "converter.tab.c"
+#line 146 "converter.y"
+                    { (yyval.valString) = "peso gr ";}
+#line 1306 "converter.tab.c"
     break;
 
   case 14: /* ud: STONE  */
-#line 146 "converter.y"
-                    { (yyval.valString) = "peso stone "}
-#line 1311 "converter.tab.c"
+#line 147 "converter.y"
+                    { (yyval.valString) = "peso stone ";}
+#line 1312 "converter.tab.c"
     break;
 
   case 15: /* ud: POUND  */
-#line 147 "converter.y"
-                    { (yyval.valString) = "peso libra "}
-#line 1317 "converter.tab.c"
+#line 148 "converter.y"
+                    { (yyval.valString) = "peso libra ";}
+#line 1318 "converter.tab.c"
     break;
 
   case 16: /* ud: ONZA  */
-#line 148 "converter.y"
-                    { (yyval.valString) = "peso onza "}
-#line 1323 "converter.tab.c"
+#line 149 "converter.y"
+                    { (yyval.valString) = "peso onza ";}
+#line 1324 "converter.tab.c"
     break;
 
   case 17: /* ud: LITRO  */
-#line 149 "converter.y"
-                    { (yyval.valString) = "capacidad l "}
-#line 1329 "converter.tab.c"
+#line 150 "converter.y"
+                    { (yyval.valString) = "capacidad l ";}
+#line 1330 "converter.tab.c"
     break;
 
   case 18: /* ud: PINTA  */
-#line 150 "converter.y"
-                    { (yyval.valString) = "capacidad pinta "}
-#line 1335 "converter.tab.c"
+#line 151 "converter.y"
+                    { (yyval.valString) = "capacidad pinta ";}
+#line 1336 "converter.tab.c"
     break;
 
   case 19: /* ud: GALLON  */
-#line 151 "converter.y"
-                    { (yyval.valString) = "capacidad galon "}
-#line 1341 "converter.tab.c"
+#line 152 "converter.y"
+                    { (yyval.valString) = "capacidad galon ";}
+#line 1342 "converter.tab.c"
     break;
 
   case 20: /* ud: BARRIL  */
-#line 152 "converter.y"
-                    { (yyval.valString) = "capacidad barril "}
-#line 1347 "converter.tab.c"
+#line 153 "converter.y"
+                    { (yyval.valString) = "capacidad barril ";}
+#line 1348 "converter.tab.c"
     break;
 
   case 21: /* ud: METRO  */
-#line 153 "converter.y"
-                    { (yyval.valString) = "distancia m "}
-#line 1353 "converter.tab.c"
+#line 154 "converter.y"
+                    { (yyval.valString) = "distancia m ";}
+#line 1354 "converter.tab.c"
     break;
 
   case 22: /* ud: YARDA  */
-#line 154 "converter.y"
-                    { (yyval.valString) = "distancia yarda "}
-#line 1359 "converter.tab.c"
+#line 155 "converter.y"
+                    { (yyval.valString) = "distancia yarda ";}
+#line 1360 "converter.tab.c"
     break;
 
   case 23: /* ud: PIE  */
-#line 155 "converter.y"
-                    { (yyval.valString) = "distancia pie "}
-#line 1365 "converter.tab.c"
+#line 156 "converter.y"
+                    { (yyval.valString) = "distancia pie ";}
+#line 1366 "converter.tab.c"
     break;
 
   case 24: /* ud: MILE  */
-#line 156 "converter.y"
-                    { (yyval.valString) = "distancia milla "}
-#line 1371 "converter.tab.c"
+#line 157 "converter.y"
+                    { (yyval.valString) = "distancia milla ";}
+#line 1372 "converter.tab.c"
     break;
 
   case 25: /* prefijo: MILI  */
-#line 160 "converter.y"
-                    { (yyval.valString) = "/ 1000 "}
-#line 1377 "converter.tab.c"
+#line 161 "converter.y"
+                    { (yyval.valString) = "/ 1000 ";}
+#line 1378 "converter.tab.c"
     break;
 
   case 26: /* prefijo: DECI  */
-#line 161 "converter.y"
-                    { (yyval.valString) = "/ 10 "}
-#line 1383 "converter.tab.c"
+#line 162 "converter.y"
+                    { (yyval.valString) = "/ 10 ";}
+#line 1384 "converter.tab.c"
     break;
 
   case 27: /* prefijo: CENTI  */
-#line 162 "converter.y"
-                    { (yyval.valString) = "/ 100 "}
-#line 1389 "converter.tab.c"
+#line 163 "converter.y"
+                    { (yyval.valString) = "/ 100 ;"}
+#line 1390 "converter.tab.c"
     break;
 
   case 28: /* prefijo: DECA  */
-#line 163 "converter.y"
-                    { (yyval.valString) = "* 10 "}
-#line 1395 "converter.tab.c"
+#line 164 "converter.y"
+                    { (yyval.valString) = "* 10 ";}
+#line 1396 "converter.tab.c"
     break;
 
   case 29: /* prefijo: HECTO  */
-#line 164 "converter.y"
-                    { (yyval.valString) = "* 100 "}
-#line 1401 "converter.tab.c"
+#line 165 "converter.y"
+                    { (yyval.valString) = "* 100 ";}
+#line 1402 "converter.tab.c"
     break;
 
   case 30: /* prefijo: KILO  */
-#line 165 "converter.y"
-                    { (yyval.valString) = "* 1000 "}
-#line 1407 "converter.tab.c"
+#line 166 "converter.y"
+                    { (yyval.valString) = "* 1000 ";}
+#line 1408 "converter.tab.c"
     break;
 
   case 31: /* operacion: cuenta  */
-#line 169 "converter.y"
-                      {(yyval.valString) = token_string((yyvsp[0].valToken))}
-#line 1413 "converter.tab.c"
+#line 170 "converter.y"
+                      {(yyval.valString) = token_string((yyvsp[0].valToken));}
+#line 1414 "converter.tab.c"
     break;
 
   case 32: /* cuenta: cuenta PLUS termino  */
-#line 173 "converter.y"
+#line 174 "converter.y"
                        {
         (yyval.valToken) = operacion_prioritaria((yyvsp[-2].valToken), (yyvsp[0].valToken), "+");
     }
-#line 1421 "converter.tab.c"
+#line 1422 "converter.tab.c"
     break;
 
   case 33: /* cuenta: cuenta MINUS termino  */
-#line 176 "converter.y"
+#line 177 "converter.y"
                          {
         (yyval.valToken) = operacion_prioritaria((yyvsp[-2].valToken), (yyvsp[0].valToken), "-");
     }
-#line 1429 "converter.tab.c"
+#line 1430 "converter.tab.c"
     break;
 
   case 34: /* cuenta: termino  */
-#line 179 "converter.y"
-                                           {(yyvsp[0].valToken)}
-#line 1435 "converter.tab.c"
+#line 180 "converter.y"
+                                           {(yyvsp[0].valToken);}
+#line 1436 "converter.tab.c"
     break;
 
   case 35: /* termino: termino MUL factor  */
-#line 183 "converter.y"
+#line 184 "converter.y"
                        {
         (yyval.valToken) = operacion_prioritaria((yyvsp[-2].valToken), (yyvsp[0].valToken), "*");
     }
-#line 1443 "converter.tab.c"
+#line 1444 "converter.tab.c"
     break;
 
   case 36: /* termino: termino DIV factor  */
-#line 186 "converter.y"
+#line 187 "converter.y"
                        {
         (yyval.valToken) = operacion_prioritaria((yyvsp[-2].valToken), (yyvsp[0].valToken), "/");
         }
-#line 1451 "converter.tab.c"
+#line 1452 "converter.tab.c"
     break;
 
   case 37: /* termino: factor  */
-#line 189 "converter.y"
-                            {(yyvsp[0].valToken)}
-#line 1457 "converter.tab.c"
+#line 190 "converter.y"
+                            {(yyvsp[0].valToken);}
+#line 1458 "converter.tab.c"
     break;
 
   case 38: /* factor: LPAREN cuenta RPAREN  */
-#line 193 "converter.y"
-                            {(yyvsp[-1].valToken)}
-#line 1463 "converter.tab.c"
+#line 194 "converter.y"
+                            {(yyvsp[-1].valToken);}
+#line 1464 "converter.tab.c"
     break;
 
   case 39: /* factor: miembro  */
-#line 194 "converter.y"
-                            {(yyvsp[0].valToken)}
-#line 1469 "converter.tab.c"
+#line 195 "converter.y"
+                            {(yyvsp[0].valToken);}
+#line 1470 "converter.tab.c"
     break;
 
 
-#line 1473 "converter.tab.c"
+#line 1474 "converter.tab.c"
 
       default: break;
     }
@@ -1662,7 +1663,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 198 "converter.y"
+#line 199 "converter.y"
 
 
 int main(int argc, char *argv[]) {
@@ -1716,10 +1717,10 @@ void print_errors() {
     error_count = 0;
 }
 
-tokens dameTokens(char * s1){   
+struct tokens dameTokens(char * s1){   
     char tokens1[5];
     int count1 = 0;
-    tokens result;
+    struct tokens result;
 
     char * token = strtok(s1, " ");
     while (token != NULL && count1 < 4) {
@@ -1735,9 +1736,9 @@ tokens dameTokens(char * s1){
 }
 
 
-bool same_ud_conv(token * s1, char * s2) {
+bool same_ud_conv(struct tokens * s1, char * s2) {
 
-    token unidad = dameTokens(s2)
+    struct tokens unidad = dameTokens(s2)
     char * compare1;
     char * compare2;
 
@@ -1768,7 +1769,7 @@ bool same_ud_conv(token * s1, char * s2) {
     return true;
 }
 
-bool same_ud_oper(token * s1, token * s2) {
+bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
 
     char * compare1;
     char * compare2;
@@ -1808,7 +1809,7 @@ const char* meassureType(const char* s1) {
     return NULL;
 }
 
- int meassureLevel(medidas[] levels, char* lev){
+ int meassureLevel(struct medidas[] levels, char* lev){
     for(int i=0; i<4; i++){
         if(strcmp(levels[i].name, lev) == 0){
             return i;
@@ -1854,9 +1855,9 @@ char* prefijo (char * s1, char * s2){
 }
 
 
-char * convertir(token * s1, char * s2){
+char * convertir(struct tokens * s1, char * s2){
 
-    token unidad = dameTokens(s2)
+    struct tokens unidad = dameTokens(s2)
     char * compare1;
     char * compare2;
 
@@ -1917,9 +1918,9 @@ char * convertir(token * s1, char * s2){
     return resultado;
 }
 
-token operacion_prioritaria(token s1, token s2, char signo) {
+struct token operacion_prioritaria(struct tokens s1, struct tokens s2, char * signo) {
 
-    token miembro;  
+    struct tokens miembro;  
     int position1;
     int position2;
     float quantity1;
@@ -2027,10 +2028,10 @@ token operacion_prioritaria(token s1, token s2, char signo) {
             miembro = dameTokens(resultado_char);
         }
     }
-    return miembro
+    return miembro;
 }
 
-char * token_string(token s1){
+char * token_string(struct tokens s1){
 
     if (s1.contador == 3){
         return strcat(s1.token[0],s1.token[2]);

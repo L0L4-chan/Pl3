@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 struct er {
     char* type; 
@@ -10,8 +11,8 @@ struct er {
 
 struct medidas{
     char* nombre;
-    float conversion
-}
+    float conversion;
+};
 
 struct tokens {
     char* token[5];
@@ -27,17 +28,17 @@ void yyerror(const char *s);
 void print_errors();
 
 
-tokens dameTokens(char * s1);
-bool same_ud_conv(tokens * s1, char * s2);
-bool same_ud_oper(tokens * s1, tokens * s2);
+struct tokens dameTokens(char * s1);
+bool same_ud_conv(struct tokens * s1, char * s2);
+bool same_ud_oper(struct tokens * s1, struct tokens * s2);
 const char* meassureType(const char* s1);
-int meassureLevel(medidas[] levels, char* lev);
+int meassureLevel(struct medidas[] levels, char* lev);
 float pasar_ud_base(float value, const char* op, const char* s2);
 float pasar_ud_final(float value, const char* op, const char* s2);
 char* prefijo (char * s1, char * s2);
-char * convertir(tokens * s1, char * s2);
-tokens operacion_prioritaria(tokens s1, tokens s2, char signo);
-char * token_string(tokens s1);
+char * convertir(struct tokens * s1, char * s2);
+struct tokens operacion_prioritaria(struct tokens s1, struct tokens s2, char signo);
+char * token_string(struct tokens s1);
 
 struct medidas distancia[4];
 distancia[0].nombre = "metro";
@@ -84,13 +85,13 @@ capacidad[3].conversion = 0.0063;
 
 %union {
     char * valString;
-    tokens * valToken;
+    struct tokens * valToken;
     int valInt;
-    float valfloat;
-}
+    float valFloat;
+};
 
 %token <valInt> ENTERO
-%token <valfloat> REAL
+%token <valFloat> REAL
 %token OPE1 OPE2 PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
 %token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
 %token MILI DECI CENTI DECA HECTO KILO 
@@ -122,51 +123,51 @@ conversion:
 
 miembro:
     ENTERO unidad {
-        strcat(to_string($1), $2);
-        $$ = dameTokens($1);
+        char * aux = strcat(to_string($1), $2);
+        $$ = dameTokens(aux);
         }
     |REAL unidad {
-        strcat(to_string($1), $2);
-        $$ = dameTokens($1);
+        char * aux =strcat(to_string($1), $2);
+        $$ = dameTokens(aux);
         }
     ;
 
 unidad:
-    ud              {$1}
+    ud              {$1;}
     | prefijo ud    {strcat($1, $2);}
 ;
 
 
 ud: 
-    YEN             { $$ = "dinero yen "}
-    | GBP           { $$ = "dinero gbp "}
-    | DOLLAR        { $$ = "dinero dollar" }
-    | EURO          { $$ = "dinero euro "}
-    | GRAMO         { $$ = "peso gr "}
-    | STONE         { $$ = "peso stone "}
-    | POUND         { $$ = "peso libra "}
-    | ONZA          { $$ = "peso onza "}
-    | LITRO         { $$ = "capacidad l "}
-    | PINTA         { $$ = "capacidad pinta "}
-    | GALLON        { $$ = "capacidad galon "}
-    | BARRIL        { $$ = "capacidad barril "}
-    | METRO         { $$ = "distancia m "}
-    | YARDA         { $$ = "distancia yarda "}
-    | PIE           { $$ = "distancia pie "}
-    | MILE          { $$ = "distancia milla "}
+    YEN             { $$ = "dinero yen ";}
+    | GBP           { $$ = "dinero gbp ";}
+    | DOLLAR        { $$ = "dinero dollar"; }
+    | EURO          { $$ = "dinero euro ";}
+    | GRAMO         { $$ = "peso gr ";}
+    | STONE         { $$ = "peso stone ";}
+    | POUND         { $$ = "peso libra ";}
+    | ONZA          { $$ = "peso onza ";}
+    | LITRO         { $$ = "capacidad l ";}
+    | PINTA         { $$ = "capacidad pinta ";}
+    | GALLON        { $$ = "capacidad galon ";}
+    | BARRIL        { $$ = "capacidad barril ";}
+    | METRO         { $$ = "distancia m ";}
+    | YARDA         { $$ = "distancia yarda ";}
+    | PIE           { $$ = "distancia pie ";}
+    | MILE          { $$ = "distancia milla ";}
 
 
 prefijo:
-    MILI            { $$ = "/ 1000 "}
-    |DECI           { $$ = "/ 10 "}
-    |CENTI          { $$ = "/ 100 "}
-    |DECA           { $$ = "* 10 "}
-    |HECTO          { $$ = "* 100 "}
-    |KILO           { $$ = "* 1000 "}
+    MILI            { $$ = "/ 1000 ";}
+    |DECI           { $$ = "/ 10 ";}
+    |CENTI          { $$ = "/ 100 ;"}
+    |DECA           { $$ = "* 10 ";}
+    |HECTO          { $$ = "* 100 ";}
+    |KILO           { $$ = "* 1000 ";}
 
 
 operacion: 
-     cuenta           {$$ = token_string($1)}      
+     cuenta           {$$ = token_string($1);}      
 ;
 
 cuenta: 
@@ -176,7 +177,7 @@ cuenta:
     |cuenta MINUS termino{
         $$ = operacion_prioritaria($1, $3, "-");
     }
-    | termino                              {$1}
+    | termino                              {$1;}
 ;
 
 termino: 
@@ -186,12 +187,12 @@ termino:
     |termino DIV factor{
         $$ = operacion_prioritaria($1, $3, "/");
         }
-    |factor                 {$1}
+    |factor                 {$1;}
 ;
 
 factor: 
-    LPAREN cuenta RPAREN    {$2}   
-    |miembro                {$1}
+    LPAREN cuenta RPAREN    {$2;}   
+    |miembro                {$1;}
 ;
 
 
@@ -248,10 +249,10 @@ void print_errors() {
     error_count = 0;
 }
 
-tokens dameTokens(char * s1){   
+struct tokens dameTokens(char * s1){   
     char tokens1[5];
     int count1 = 0;
-    tokens result;
+    struct tokens result;
 
     char * token = strtok(s1, " ");
     while (token != NULL && count1 < 4) {
@@ -267,9 +268,9 @@ tokens dameTokens(char * s1){
 }
 
 
-bool same_ud_conv(tokens * s1, char * s2) {
+bool same_ud_conv(struct tokens * s1, char * s2) {
 
-    tokens unidad = dameTokens(s2)
+    struct tokens unidad = dameTokens(s2)
     char * compare1;
     char * compare2;
 
@@ -300,7 +301,7 @@ bool same_ud_conv(tokens * s1, char * s2) {
     return true;
 }
 
-bool same_ud_oper(tokens * s1, tokens * s2) {
+bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
 
     char * compare1;
     char * compare2;
@@ -340,7 +341,7 @@ const char* meassureType(const char* s1) {
     return NULL;
 }
 
- int meassureLevel(medidas[] levels, char* lev){
+ int meassureLevel(struct medidas[] levels, char* lev){
     for(int i=0; i<4; i++){
         if(strcmp(levels[i].name, lev) == 0){
             return i;
@@ -386,9 +387,9 @@ char* prefijo (char * s1, char * s2){
 }
 
 
-char * convertir(tokens * s1, char * s2){
+char * convertir(struct tokens * s1, char * s2){
 
-    tokens unidad = dameTokens(s2)
+    struct tokens unidad = dameTokens(s2)
     char * compare1;
     char * compare2;
 
@@ -449,9 +450,9 @@ char * convertir(tokens * s1, char * s2){
     return resultado;
 }
 
-token operacion_prioritaria(token s1, token s2, char signo) {
+struct token operacion_prioritaria(struct tokens s1, struct tokens s2, char * signo) {
 
-    tokens miembro;  
+    struct tokens miembro;  
     int position1;
     int position2;
     float quantity1;
@@ -559,10 +560,10 @@ token operacion_prioritaria(token s1, token s2, char signo) {
             miembro = dameTokens(resultado_char);
         }
     }
-    return miembro
+    return miembro;
 }
 
-char * token_string(token s1){
+char * token_string(struct tokens s1){
 
     if (s1.contador == 3){
         return strcat(s1.token[0],s1.token[2]);

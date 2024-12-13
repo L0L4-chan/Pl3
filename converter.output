@@ -64,7 +64,7 @@ Terminals, with rules where they appear
     $end (0) 0
     error (256)
     ENTERO <valInt> (258) 4
-    REAL <valfloat> (259) 5
+    REAL <valFloat> (259) 5
     OPE1 (260) 1
     OPE2 (261) 2
     PLUS (262) 31

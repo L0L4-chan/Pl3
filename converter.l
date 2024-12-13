@@ -47,7 +47,6 @@ real                  {yylval.valFloat = atof(yytext); return REAL;}
 "-"                   {return MINUS;}
 "*"                   {return MUL;}
 "/"                   {return DIV;}
-"%"                   {return MOD;}
 "("                   {return LPAREN;}
 ")"                   {return RPAREN;}
 "->"                  {return ARROW;}
@@ -75,7 +74,7 @@ deci                  {return DECI;}
 deca                  {return DECA;}
 centi                 {return CENTI;}
 kilo                  {return KILO;}
-hecto                 {return HECTO}
+hecto                 {return HECTO;}
 
 
 [ \t\r]+              { } 
