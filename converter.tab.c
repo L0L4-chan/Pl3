@@ -102,7 +102,7 @@ struct tokens dameTokens(char * s1);
 bool same_ud_conv(struct tokens * s1, char * s2);
 bool same_ud_oper(struct tokens * s1, struct tokens * s2);
 const char* meassureType(const char* s1);
-int meassureLevel(struct medidas[] levels, char* lev);
+int meassureLevel(struct medidas* levels, char* lev);
 float pasar_ud_base(float value, const char* op, const char* s2);
 float pasar_ud_final(float value, const char* op, const char* s2);
 char* prefijo (char * s1, char * s2);
@@ -1716,7 +1716,7 @@ struct tokens dameTokens(char * s1){
 
 
     result.token=tokens1;
-    result.count1=count1;
+    result.count=count1;
 
     return result;
 }
@@ -1724,7 +1724,7 @@ struct tokens dameTokens(char * s1){
 
 bool same_ud_conv(struct tokens * s1, char * s2) {
 
-    struct tokens unidad = dameTokens(s2)
+    struct tokens unidad = dameTokens(s2);
     char * compare1;
     char * compare2;
 
@@ -1795,7 +1795,7 @@ const char* meassureType(const char* s1) {
     return NULL;
 }
 
- int meassureLevel(struct medidas[] levels, char* lev){
+ int meassureLevel(struct medidas * levels, char* lev){
     for(int i=0; i<4; i++){
         if(strcmp(levels[i].name, lev) == 0){
             return i;
@@ -1895,7 +1895,7 @@ char * convertir(struct tokens * s1, char * s2){
                 return "";
             }else{   
                 quantity = pasar_ud_final(quantity, unidad.token[0], unidad.token[1]); 
-                resultado = to_string (strcat(quantity,strcat(prefijo(unidad.token[0], unidad.token[1]),unidad.token[3])))
+                resultado = to_string (strcat(quantity,strcat(prefijo(unidad.token[0], unidad.token[1]),unidad.token[3])));
             } 
             break;
         
@@ -1974,44 +1974,29 @@ struct token operacion_prioritaria(struct tokens s1, struct tokens s2, char * si
             break;
         }
 
-        switch(signo) {
-            case "+":
-                resultado = quantity1 + quantity2;
-                break;
-            case "-":
-                resultado = quantity1 - quantity2;
-                break;
-            case "*":
-                resultado = quantity1 * quantity2;
-                break;
-            case "/":
-                resultado = quantity1 / quantity2;
-                break;
-        }
+         if(strcmp(signo,"+")==0)resultado = quantity1 + quantity2;
+        else if(strcmp(signo,"-")==0)resultado = quantity1 - quantity2;
+        else if(strcmp(signo,"*")==0) resultado = quantity1 * quantity2;
+        else if(strcmp(signo,"/")==0) resultado = quantity1 / quantity2;
 
         if (unidad_resultado[2]==NULL && unidad_resultado[3]==NULL){
             if(position1!=0){
             resultado = resultado * medida[position1].conversion;
           }
-            resultado_char = to_string(resultado);
-            resultado_char = strcat (resultado_char, " ");
-            resultado_char = strcat (resultado_char, unidad_resultado[0]);
-            resultado_char = strcat (resultado_char, " ");
-            resultado_char = strcat (resultado_char, unidad_resultado[1]);
-            miembro = dameTokens(resultado_char);
+            miembro.token[0] = to_string(resultado);
+            miembro.token[1] = unidad_resultado[0] 
+            miembro.token[2] = unidad_resultado[1];
+            miembro.contador = 3;
         }
         else {
             resultado = pasar_ud_final(resultado, unidad_resultado[2], unidad_resultado[3]);
-            resultado_char = to_string(resultado);
-            resultado_char = strcat (resultado_char, " ");
-            resultado_char = strcat (resultado_char, unidad_resultado[0]);
-            resultado_char = strcat (resultado_char, " ");
-            resultado_char = strcat (resultado_char, unidad_resultado[1]);
-            resultado_char = strcat (resultado_char, " ");
-            resultado_char = strcat (resultado_char, unidad_resultado[2]);
-            resultado_char = strcat (resultado_char, " ");
-            resultado_char = strcat (resultado_char, unidad_resultado[3]);
-            miembro = dameTokens(resultado_char);
+            miembro.token[0] = to_string(resultado);
+            miembro.token[1] = unidad_resultado[0];
+            miembro.token[2] = unidad_resultado[1];
+            miembro.token[3] = unidad_resultado[2];
+            miembro.token[4] = unidad_resultado[3];
+            miembro.contador = 5; 
+          
         }
     }
     return miembro;
