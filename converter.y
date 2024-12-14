@@ -70,11 +70,10 @@ struct medidas capacidad[4] = {
 };
 %}
 
-%token <valInt> ENTERO
 %token <valFloat> REAL
-%token OPE1 OPE2 PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
-%token GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
-%token MILI DECI CENTI DECA HECTO KILO 
+%token <valString> OPE1 OPE2 PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
+%token <valString> GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
+%token <valString> MILI DECI CENTI DECA HECTO KILO 
 %type <valString>  conversion unidad ud prefijo operacion 
 %type <valToken> miembro cuenta factor termino
 
@@ -107,12 +106,7 @@ conversion:
 ;
 
 miembro:
-    ENTERO unidad {
-        char aux[100];
-        snprintf(aux, sizeof(aux), "%d %s", $1, $2);  
-        $$ = dameTokens(aux);  
-    }
-    | REAL unidad {
+         REAL unidad {
         char aux[100];
         snprintf(aux, sizeof(aux), "%f %s", $1, $2); 
         $$ = dameTokens(aux);
@@ -464,8 +458,7 @@ char * convertir(struct tokens * s1, char * s2){
                 yyerror("no puede tener prefijo");
                 return "";
             }else{   
-                quantity = pasar_ud_final(quantity, unidad->token[0], unidad->token[1]); 
-                resultado = malloc(100);  
+                quantity = pasar_ud_final(quantity, unidad->token[0], unidad->token[1]);  
                 snprintf(resultado, 100, "%f %s%s", quantity, prefijo(unidad->token[0], unidad->token[1]), unidad->token[3]);
           } 
             break;    
