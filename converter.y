@@ -89,7 +89,7 @@ struct medidas capacidad[4] = {
 %%
 
 S:  OPE1 conversion {
-    if ($2 ==NULL)
+    if ($2 !=NULL)
         printf("El resultado de la conversión es: %s",$2);
     }
     | OPE2 operacion {
@@ -123,7 +123,7 @@ unidad:
 ud: 
     YEN             { $$ = "dinero yen ";}
     | GBP           { $$ = "dinero gbp ";}
-    | DOLLAR        { $$ = "dinero dollar"; }
+    | DOLLAR        { $$ = "dinero dolar"; }
     | EURO          { $$ = "dinero euro ";}
     | GRAMO         { $$ = "peso gramo ";}
     | STONE         { $$ = "peso stone ";}
@@ -232,25 +232,6 @@ void print_errors() {
 
     error_count = 0;
 }
-/*
-struct tokens * dameTokens(char * s1){   
-    if(s1==NULL) {
-        return NULL;
-    }
-    char * s1copy = strdup(s1);
-    struct tokens * result;
-    result->contador = 0;
-
-    char * token = strtok(s1copy, " ");
-    while (token != NULL && result->contador < 5) {
-        result->token[result->contador] = strdup(token);
-        result->contador++;
-        token = strtok(NULL, " ");
-    }
-    free(s1copy); 
-    return result;
-}
-*/
 
 struct tokens * dameTokens(char * s1) {
     if (s1 == NULL) {
@@ -258,35 +239,21 @@ struct tokens * dameTokens(char * s1) {
         return NULL;
     }
 
-    // Reservar memoria para la estructura tokens
     struct tokens * result = (struct tokens *)malloc(sizeof(struct tokens));
     if (result == NULL) {
-        fprintf(stderr, "Error: No se pudo asignar memoria para tokens.\n");
         return NULL;
     }
-    fprintf(stderr, "Depuración: Memoria para la estructura tokens asignada correctamente.\n");
-
-    // Inicializar el contador y los punteros en la estructura
     result->contador = 0;
     for (int i = 0; i < 5; i++) {
         result->token[i] = NULL;
     }
-    fprintf(stderr, "Depuración: Inicialización de la estructura completada.\n");
-
-    // Crear una copia de s1 para usar con strtok
     char * s1copy = strdup(s1);
     if (s1copy == NULL) {
-        fprintf(stderr, "Error: No se pudo duplicar la cadena.\n");
         free(result);
         return NULL;
     }
-    fprintf(stderr, "Depuración: Copia de la cadena creada: \"%s\".\n", s1copy);
-
-    // Tokenizar la cadena
     char * token = strtok(s1copy, " ");
     while (token != NULL && result->contador < 5) {
-        fprintf(stderr, "Depuración: Token encontrado: \"%s\".\n", token);
-
         result->token[result->contador] = strdup(token);
         if (result->token[result->contador] == NULL) {
             fprintf(stderr, "Error: No se pudo duplicar el token.\n");
@@ -298,8 +265,6 @@ struct tokens * dameTokens(char * s1) {
             free(s1copy);
             return NULL;
         }
-        fprintf(stderr, "Depuración: Token duplicado y almacenado en la posición %d.\n", result->contador);
-
         result->contador++;
         token = strtok(NULL, " ");
     }
@@ -307,30 +272,11 @@ struct tokens * dameTokens(char * s1) {
     if (result->contador == 5 && token != NULL) {
         fprintf(stderr, "Depuración: Se alcanzó el límite de tokens (5). Ignorando el resto.\n");
     }
-
-    // Liberar memoria de s1copy
     free(s1copy);
-    fprintf(stderr, "Depuración: Memoria temporal liberada.\n");
-
-    // Mensaje final mostrando el estado de result
-    fprintf(stderr, "Depuración: Estado final de result:\n");
-    fprintf(stderr, "  Contador: %d\n", result->contador);
-    for (int i = 0; i < result->contador; i++) {
-        fprintf(stderr, "  Token[%d]: \"%s\"\n", i, result->token[i]);
-    }
-    for (int i = result->contador; i < 5; i++) {
-        fprintf(stderr, "  Token[%d]: NULL\n", i);
-    }
-
-    fprintf(stderr, "Depuración: Total de tokens encontrados: %d.\n", result->contador);
     return result;
 }
 
-
-
-
 bool same_ud_conv(struct tokens * s1, char * s2) {
-
     if(s1 == NULL || s2 == NULL || strcmp(s2, "")==0) {
         yyerror("Falta elemnto");
         return false;
@@ -435,8 +381,11 @@ struct medidas* meassureType(const char* s1) {
 }
 
 int meassureLevel(struct medidas * levels, char* lev){
+    
+    printf("%s", lev);
     for(int i=0; i<4; i++){
         if(strcmp(levels[i].nombre, lev) == 0){
+            printf("%d\n", i);
             return i;
             break;
         }
@@ -525,7 +474,10 @@ char * convertir(struct tokens * s1, char * s2){
         case 2:
             position2 = meassureLevel(medida, unidad->token[1]);
             if(position2!=0){
+                printf("posicion %d", position2);
+                printf(" euros %f\n", quantity);
                 quantity = quantity * medida[position2].conversion;
+                printf("tras conversion %f\n", quantity);
                 resultado = malloc(100); 
                 snprintf(resultado, 100, "%f %s", quantity, unidad->token[1]);
                 break;
@@ -541,6 +493,7 @@ char * convertir(struct tokens * s1, char * s2){
           } 
             break;    
     }
+    printf(" el resultado aqui es %s\n",resultado);
     return resultado;
 }
 
