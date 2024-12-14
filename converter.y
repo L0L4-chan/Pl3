@@ -599,22 +599,25 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
         }
 
         fprintf(stderr, "Depuración op_prioritaria: Resultado de la operación %.2f.\n", resultado);
-        fprintf(stderr, "%d\n", position1);
-        fprintf(stderr, "%d\n", s1->contador);
+        fprintf(stderr, "Depuración op_prioritaria: s1->position1 antes de la comparación %d\n", position1);
+        fprintf(stderr, "Depuración op_prioritaria: s1->contador antes de la comparación = %d\n", s1->contador);
+        fprintf(stderr, "Depuración op_prioritaria: s1->contador es %d, s1->token[0] = %s\n", s1->contador, s1->token[0]);
+        int auxiliar = s1->contador;
+        printf("Depuración op_prioritaria: auxiliar antes de la comparación = %d\n", auxiliar);
 
-        if (s1->contador != 5) {
-            printf("Depuración op_prioritaria: d");
+        if (auxiliar == 3) {
+            printf("Depuración op_prioritaria: Se ejecuta primera rama");
             if (position1 != 0) {
                 resultado = resultado * medida[position1].conversion;
                 fprintf(stderr, "Depuración op_prioritaria: Resultado ajustado a %.2f con position1.\n", resultado);
             }
             printf("Depuración op_prioritaria: 1");
         } else {
-            printf("Depuración op_prioritaria: q");
+            printf("Depuración op_prioritaria: Se ejecuta segunda rama");
             resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]);
             fprintf(stderr, "Depuración op_prioritaria: Resultado convertido a unidad final %.2f.\n", resultado);
         }
-        printf("Depuración op_prioritaria: 2");
+        printf("Depuración op_prioritaria: Salida condicional");
         snprintf(miembro->token[0], sizeof(miembro->token[0]), "%.2f", resultado);
         fprintf(stderr, "Depuración op_prioritaria: Resultado formateado en miembro->token[0] = \"%s\".\n", miembro->token[0]);
 
@@ -627,7 +630,6 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
     }
 
 }
-
 
 char* token_string(struct tokens *s1) {
     
