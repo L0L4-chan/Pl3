@@ -1,2 +1,1 @@
-calculo 3 litro + 5 litro
-     
+conversion 3 EUR >> USD

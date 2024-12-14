@@ -1,0 +1,733 @@
+Terminals unused in grammar
+
+    DELIM
+    MEAN
+    MODE
+    MEDIAN
+
+
+Grammar
+
+    0 $accept: S $end
+
+    1 S: OPE1 conversion
+    2  | OPE2 operacion
+
+    3 conversion: miembro ARROW unidad
+
+    4 miembro: REAL unidad
+
+    5 unidad: ud
+    6       | prefijo ud
+
+    7 ud: YEN
+    8   | GBP
+    9   | DOLLAR
+   10   | EURO
+   11   | GRAMO
+   12   | STONE
+   13   | POUND
+   14   | ONZA
+   15   | LITRO
+   16   | PINTA
+   17   | GALLON
+   18   | BARRIL
+   19   | METRO
+   20   | YARDA
+   21   | PIE
+   22   | MILE
+
+   23 prefijo: MILI
+   24        | DECI
+   25        | CENTI
+   26        | DECA
+   27        | HECTO
+   28        | KILO
+
+   29 operacion: cuenta
+
+   30 cuenta: cuenta PLUS termino
+   31       | cuenta MINUS termino
+   32       | termino
+
+   33 termino: termino MUL factor
+   34        | termino DIV factor
+   35        | factor
+
+   36 factor: LPAREN cuenta RPAREN
+   37       | miembro
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    REAL <valFloat> (258) 4
+    OPE1 <valString> (259) 1
+    OPE2 <valString> (260) 2
+    PLUS <valString> (261) 30
+    MINUS <valString> (262) 31
+    MUL <valString> (263) 33
+    DIV <valString> (264) 34
+    DELIM <valString> (265)
+    LPAREN <valString> (266) 36
+    RPAREN <valString> (267) 36
+    ARROW <valString> (268) 3
+    MEAN <valString> (269)
+    MODE <valString> (270)
+    MEDIAN <valString> (271)
+    GBP <valString> (272) 8
+    YEN <valString> (273) 7
+    DOLLAR <valString> (274) 9
+    EURO <valString> (275) 10
+    GRAMO <valString> (276) 11
+    STONE <valString> (277) 12
+    POUND <valString> (278) 13
+    ONZA <valString> (279) 14
+    LITRO <valString> (280) 15
+    PINTA <valString> (281) 16
+    GALLON <valString> (282) 17
+    BARRIL <valString> (283) 18
+    METRO <valString> (284) 19
+    YARDA <valString> (285) 20
+    PIE <valString> (286) 21
+    MILE <valString> (287) 22
+    MILI <valString> (288) 23
+    DECI <valString> (289) 24
+    CENTI <valString> (290) 25
+    DECA <valString> (291) 26
+    HECTO <valString> (292) 27
+    KILO <valString> (293) 28
+
+
+Nonterminals, with rules where they appear
+
+    $accept (39)
+        on left: 0
+    S (40)
+        on left: 1 2
+        on right: 0
+    conversion <valString> (41)
+        on left: 3
+        on right: 1
+    miembro <valToken> (42)
+        on left: 4
+        on right: 3 37
+    unidad <valString> (43)
+        on left: 5 6
+        on right: 3 4
+    ud <valString> (44)
+        on left: 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
+        on right: 5 6
+    prefijo <valString> (45)
+        on left: 23 24 25 26 27 28
+        on right: 6
+    operacion <valString> (46)
+        on left: 29
+        on right: 2
+    cuenta <valToken> (47)
+        on left: 30 31 32
+        on right: 29 30 31 36
+    termino <valToken> (48)
+        on left: 33 34 35
+        on right: 30 31 32 33 34
+    factor <valToken> (49)
+        on left: 36 37
+        on right: 33 34 35
+
+
+State 0
+
+    0 $accept: • S $end
+    1 S: • OPE1 conversion
+    2  | • OPE2 operacion
+
+    OPE1  shift, and go to state 1
+    OPE2  shift, and go to state 2
+
+    S  go to state 3
+
+
+State 1
+
+    1 S: OPE1 • conversion
+    3 conversion: • miembro ARROW unidad
+    4 miembro: • REAL unidad
+
+    REAL  shift, and go to state 4
+
+    conversion  go to state 5
+    miembro     go to state 6
+
+
+State 2
+
+    2 S: OPE2 • operacion
+    4 miembro: • REAL unidad
+   29 operacion: • cuenta
+   30 cuenta: • cuenta PLUS termino
+   31       | • cuenta MINUS termino
+   32       | • termino
+   33 termino: • termino MUL factor
+   34        | • termino DIV factor
+   35        | • factor
+   36 factor: • LPAREN cuenta RPAREN
+   37       | • miembro
+
+    REAL    shift, and go to state 4
+    LPAREN  shift, and go to state 7
+
+    miembro    go to state 8
+    operacion  go to state 9
+    cuenta     go to state 10
+    termino    go to state 11
+    factor     go to state 12
+
+
+State 3
+
+    0 $accept: S • $end
+
+    $end  shift, and go to state 13
+
+
+State 4
+
+    4 miembro: REAL • unidad
+    5 unidad: • ud
+    6       | • prefijo ud
+    7 ud: • YEN
+    8   | • GBP
+    9   | • DOLLAR
+   10   | • EURO
+   11   | • GRAMO
+   12   | • STONE
+   13   | • POUND
+   14   | • ONZA
+   15   | • LITRO
+   16   | • PINTA
+   17   | • GALLON
+   18   | • BARRIL
+   19   | • METRO
+   20   | • YARDA
+   21   | • PIE
+   22   | • MILE
+   23 prefijo: • MILI
+   24        | • DECI
+   25        | • CENTI
+   26        | • DECA
+   27        | • HECTO
+   28        | • KILO
+
+    GBP     shift, and go to state 14
+    YEN     shift, and go to state 15
+    DOLLAR  shift, and go to state 16
+    EURO    shift, and go to state 17
+    GRAMO   shift, and go to state 18
+    STONE   shift, and go to state 19
+    POUND   shift, and go to state 20
+    ONZA    shift, and go to state 21
+    LITRO   shift, and go to state 22
+    PINTA   shift, and go to state 23
+    GALLON  shift, and go to state 24
+    BARRIL  shift, and go to state 25
+    METRO   shift, and go to state 26
+    YARDA   shift, and go to state 27
+    PIE     shift, and go to state 28
+    MILE    shift, and go to state 29
+    MILI    shift, and go to state 30
+    DECI    shift, and go to state 31
+    CENTI   shift, and go to state 32
+    DECA    shift, and go to state 33
+    HECTO   shift, and go to state 34
+    KILO    shift, and go to state 35
+
+    unidad   go to state 36
+    ud       go to state 37
+    prefijo  go to state 38
+
+
+State 5
+
+    1 S: OPE1 conversion •
+
+    $default  reduce using rule 1 (S)
+
+
+State 6
+
+    3 conversion: miembro • ARROW unidad
+
+    ARROW  shift, and go to state 39
+
+
+State 7
+
+    4 miembro: • REAL unidad
+   30 cuenta: • cuenta PLUS termino
+   31       | • cuenta MINUS termino
+   32       | • termino
+   33 termino: • termino MUL factor
+   34        | • termino DIV factor
+   35        | • factor
+   36 factor: • LPAREN cuenta RPAREN
+   36       | LPAREN • cuenta RPAREN
+   37       | • miembro
+
+    REAL    shift, and go to state 4
+    LPAREN  shift, and go to state 7
+
+    miembro  go to state 8
+    cuenta   go to state 40
+    termino  go to state 11
+    factor   go to state 12
+
+
+State 8
+
+   37 factor: miembro •
+
+    $default  reduce using rule 37 (factor)
+
+
+State 9
+
+    2 S: OPE2 operacion •
+
+    $default  reduce using rule 2 (S)
+
+
+State 10
+
+   29 operacion: cuenta •  [$end]
+   30 cuenta: cuenta • PLUS termino
+   31       | cuenta • MINUS termino
+
+    PLUS   shift, and go to state 41
+    MINUS  shift, and go to state 42
+
+    $default  reduce using rule 29 (operacion)
+
+
+State 11
+
+   32 cuenta: termino •  [$end, PLUS, MINUS, RPAREN]
+   33 termino: termino • MUL factor
+   34        | termino • DIV factor
+
+    MUL  shift, and go to state 43
+    DIV  shift, and go to state 44
+
+    $default  reduce using rule 32 (cuenta)
+
+
+State 12
+
+   35 termino: factor •
+
+    $default  reduce using rule 35 (termino)
+
+
+State 13
+
+    0 $accept: S $end •
+
+    $default  accept
+
+
+State 14
+
+    8 ud: GBP •
+
+    $default  reduce using rule 8 (ud)
+
+
+State 15
+
+    7 ud: YEN •
+
+    $default  reduce using rule 7 (ud)
+
+
+State 16
+
+    9 ud: DOLLAR •
+
+    $default  reduce using rule 9 (ud)
+
+
+State 17
+
+   10 ud: EURO •
+
+    $default  reduce using rule 10 (ud)
+
+
+State 18
+
+   11 ud: GRAMO •
+
+    $default  reduce using rule 11 (ud)
+
+
+State 19
+
+   12 ud: STONE •
+
+    $default  reduce using rule 12 (ud)
+
+
+State 20
+
+   13 ud: POUND •
+
+    $default  reduce using rule 13 (ud)
+
+
+State 21
+
+   14 ud: ONZA •
+
+    $default  reduce using rule 14 (ud)
+
+
+State 22
+
+   15 ud: LITRO •
+
+    $default  reduce using rule 15 (ud)
+
+
+State 23
+
+   16 ud: PINTA •
+
+    $default  reduce using rule 16 (ud)
+
+
+State 24
+
+   17 ud: GALLON •
+
+    $default  reduce using rule 17 (ud)
+
+
+State 25
+
+   18 ud: BARRIL •
+
+    $default  reduce using rule 18 (ud)
+
+
+State 26
+
+   19 ud: METRO •
+
+    $default  reduce using rule 19 (ud)
+
+
+State 27
+
+   20 ud: YARDA •
+
+    $default  reduce using rule 20 (ud)
+
+
+State 28
+
+   21 ud: PIE •
+
+    $default  reduce using rule 21 (ud)
+
+
+State 29
+
+   22 ud: MILE •
+
+    $default  reduce using rule 22 (ud)
+
+
+State 30
+
+   23 prefijo: MILI •
+
+    $default  reduce using rule 23 (prefijo)
+
+
+State 31
+
+   24 prefijo: DECI •
+
+    $default  reduce using rule 24 (prefijo)
+
+
+State 32
+
+   25 prefijo: CENTI •
+
+    $default  reduce using rule 25 (prefijo)
+
+
+State 33
+
+   26 prefijo: DECA •
+
+    $default  reduce using rule 26 (prefijo)
+
+
+State 34
+
+   27 prefijo: HECTO •
+
+    $default  reduce using rule 27 (prefijo)
+
+
+State 35
+
+   28 prefijo: KILO •
+
+    $default  reduce using rule 28 (prefijo)
+
+
+State 36
+
+    4 miembro: REAL unidad •
+
+    $default  reduce using rule 4 (miembro)
+
+
+State 37
+
+    5 unidad: ud •
+
+    $default  reduce using rule 5 (unidad)
+
+
+State 38
+
+    6 unidad: prefijo • ud
+    7 ud: • YEN
+    8   | • GBP
+    9   | • DOLLAR
+   10   | • EURO
+   11   | • GRAMO
+   12   | • STONE
+   13   | • POUND
+   14   | • ONZA
+   15   | • LITRO
+   16   | • PINTA
+   17   | • GALLON
+   18   | • BARRIL
+   19   | • METRO
+   20   | • YARDA
+   21   | • PIE
+   22   | • MILE
+
+    GBP     shift, and go to state 14
+    YEN     shift, and go to state 15
+    DOLLAR  shift, and go to state 16
+    EURO    shift, and go to state 17
+    GRAMO   shift, and go to state 18
+    STONE   shift, and go to state 19
+    POUND   shift, and go to state 20
+    ONZA    shift, and go to state 21
+    LITRO   shift, and go to state 22
+    PINTA   shift, and go to state 23
+    GALLON  shift, and go to state 24
+    BARRIL  shift, and go to state 25
+    METRO   shift, and go to state 26
+    YARDA   shift, and go to state 27
+    PIE     shift, and go to state 28
+    MILE    shift, and go to state 29
+
+    ud  go to state 45
+
+
+State 39
+
+    3 conversion: miembro ARROW • unidad
+    5 unidad: • ud
+    6       | • prefijo ud
+    7 ud: • YEN
+    8   | • GBP
+    9   | • DOLLAR
+   10   | • EURO
+   11   | • GRAMO
+   12   | • STONE
+   13   | • POUND
+   14   | • ONZA
+   15   | • LITRO
+   16   | • PINTA
+   17   | • GALLON
+   18   | • BARRIL
+   19   | • METRO
+   20   | • YARDA
+   21   | • PIE
+   22   | • MILE
+   23 prefijo: • MILI
+   24        | • DECI
+   25        | • CENTI
+   26        | • DECA
+   27        | • HECTO
+   28        | • KILO
+
+    GBP     shift, and go to state 14
+    YEN     shift, and go to state 15
+    DOLLAR  shift, and go to state 16
+    EURO    shift, and go to state 17
+    GRAMO   shift, and go to state 18
+    STONE   shift, and go to state 19
+    POUND   shift, and go to state 20
+    ONZA    shift, and go to state 21
+    LITRO   shift, and go to state 22
+    PINTA   shift, and go to state 23
+    GALLON  shift, and go to state 24
+    BARRIL  shift, and go to state 25
+    METRO   shift, and go to state 26
+    YARDA   shift, and go to state 27
+    PIE     shift, and go to state 28
+    MILE    shift, and go to state 29
+    MILI    shift, and go to state 30
+    DECI    shift, and go to state 31
+    CENTI   shift, and go to state 32
+    DECA    shift, and go to state 33
+    HECTO   shift, and go to state 34
+    KILO    shift, and go to state 35
+
+    unidad   go to state 46
+    ud       go to state 37
+    prefijo  go to state 38
+
+
+State 40
+
+   30 cuenta: cuenta • PLUS termino
+   31       | cuenta • MINUS termino
+   36 factor: LPAREN cuenta • RPAREN
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    RPAREN  shift, and go to state 47
+
+
+State 41
+
+    4 miembro: • REAL unidad
+   30 cuenta: cuenta PLUS • termino
+   33 termino: • termino MUL factor
+   34        | • termino DIV factor
+   35        | • factor
+   36 factor: • LPAREN cuenta RPAREN
+   37       | • miembro
+
+    REAL    shift, and go to state 4
+    LPAREN  shift, and go to state 7
+
+    miembro  go to state 8
+    termino  go to state 48
+    factor   go to state 12
+
+
+State 42
+
+    4 miembro: • REAL unidad
+   31 cuenta: cuenta MINUS • termino
+   33 termino: • termino MUL factor
+   34        | • termino DIV factor
+   35        | • factor
+   36 factor: • LPAREN cuenta RPAREN
+   37       | • miembro
+
+    REAL    shift, and go to state 4
+    LPAREN  shift, and go to state 7
+
+    miembro  go to state 8
+    termino  go to state 49
+    factor   go to state 12
+
+
+State 43
+
+    4 miembro: • REAL unidad
+   33 termino: termino MUL • factor
+   36 factor: • LPAREN cuenta RPAREN
+   37       | • miembro
+
+    REAL    shift, and go to state 4
+    LPAREN  shift, and go to state 7
+
+    miembro  go to state 8
+    factor   go to state 50
+
+
+State 44
+
+    4 miembro: • REAL unidad
+   34 termino: termino DIV • factor
+   36 factor: • LPAREN cuenta RPAREN
+   37       | • miembro
+
+    REAL    shift, and go to state 4
+    LPAREN  shift, and go to state 7
+
+    miembro  go to state 8
+    factor   go to state 51
+
+
+State 45
+
+    6 unidad: prefijo ud •
+
+    $default  reduce using rule 6 (unidad)
+
+
+State 46
+
+    3 conversion: miembro ARROW unidad •
+
+    $default  reduce using rule 3 (conversion)
+
+
+State 47
+
+   36 factor: LPAREN cuenta RPAREN •
+
+    $default  reduce using rule 36 (factor)
+
+
+State 48
+
+   30 cuenta: cuenta PLUS termino •  [$end, PLUS, MINUS, RPAREN]
+   33 termino: termino • MUL factor
+   34        | termino • DIV factor
+
+    MUL  shift, and go to state 43
+    DIV  shift, and go to state 44
+
+    $default  reduce using rule 30 (cuenta)
+
+
+State 49
+
+   31 cuenta: cuenta MINUS termino •  [$end, PLUS, MINUS, RPAREN]
+   33 termino: termino • MUL factor
+   34        | termino • DIV factor
+
+    MUL  shift, and go to state 43
+    DIV  shift, and go to state 44
+
+    $default  reduce using rule 31 (cuenta)
+
+
+State 50
+
+   33 termino: termino MUL factor •
+
+    $default  reduce using rule 33 (termino)
+
+
+State 51
+
+   34 termino: termino DIV factor •
+
+    $default  reduce using rule 34 (termino)

@@ -110,14 +110,14 @@ conversion:
 ;
 
 miembro:
-         REAL unidad {
+        REAL unidad {
         char aux[100];
-        snprintf(aux, sizeof(aux), "%f %s", $1, $2); 
+        printf(aux, sizeof(aux), "%f %s", $1, $2); 
         $$ = dameTokens(aux);
     };
 
 unidad:
-    ud               { $$ = $1; }
+    ud              {$$ = $1; }
     | prefijo ud    {char aux[100];
                     snprintf(aux, sizeof(aux), "%s%s", $1, $2);
                     $$ = strdup(aux);}
@@ -125,31 +125,31 @@ unidad:
 
 
 ud: 
-    YEN             { $$ = "dinero yen ";}
-    | GBP           { $$ = "dinero gbp ";}
-    | DOLLAR        { $$ = "dinero dolar"; }
-    | EURO          { $$ = "dinero euro ";}
-    | GRAMO         { $$ = "peso gramo ";}
-    | STONE         { $$ = "peso stone ";}
-    | POUND         { $$ = "peso libra ";}
-    | ONZA          { $$ = "peso onza ";}
-    | LITRO         { $$ = "capacidad litro ";}
-    | PINTA         { $$ = "capacidad pinta ";}
-    | GALLON        { $$ = "capacidad galon ";}
-    | BARRIL        { $$ = "capacidad barril ";}
-    | METRO         { $$ = "distancia metro ";}
-    | YARDA         { $$ = "distancia yarda ";}
-    | PIE           { $$ = "distancia pie ";}
-    | MILE          { $$ = "distancia milla ";}
+    YEN             { $$ = strdup("dinero yen ");}
+    | GBP           { $$ = strdup("dinero gbp ");}
+    | DOLLAR        { $$ = strdup("dinero dollar"); }
+    | EURO          { $$ = strdup("dinero euro ");}
+    | GRAMO         { $$ = strdup("peso gramo ");}
+    | STONE         { $$ = strdup("peso stone ");}
+    | POUND         { $$ = strdup("peso libra ");}
+    | ONZA          { $$ = strdup("peso onza ");}
+    | LITRO         { $$ = strdup("capacidad litro ");}
+    | PINTA         { $$ = strdup("capacidad pinta ");}
+    | GALLON        { $$ = strdup("capacidad galon ");}
+    | BARRIL        { $$ = strdup("capacidad barril ");}
+    | METRO         { $$ = strdup("distancia metro ");}
+    | YARDA         { $$ = strdup("distancia yarda ");}
+    | PIE           { $$ = strdup("distancia pie ");}
+    | MILE          { $$ = strdup("distancia milla ");}
 
 
 prefijo:
-    MILI            { $$ = "/ 1000 ";}
-    |DECI           { $$ = "/ 10 ";}
-    |CENTI          { $$ = "/ 100 ";}
-    |DECA           { $$ = "* 10 ";}
-    |HECTO          { $$ = "* 100 ";}
-    |KILO           { $$ = "* 1000 ";}
+    MILI            { $$ = strdup("/ 1000 ");}
+    |DECI           { $$ = strdup("/ 10 ");}
+    |CENTI          { $$ = strdup("/ 100 ");}
+    |DECA           { $$ = strdup("* 10 ");}
+    |HECTO          { $$ = strdup("* 100 ");}
+    |KILO           { $$ = strdup("* 1000 ");}
 
 
 operacion: 
@@ -251,30 +251,17 @@ struct tokens * dameTokens(char * s1) {
         result->token[i] = NULL;
     }
     char * s1copy = strdup(s1);
-    if (s1copy == NULL) {
-        free(result);
-        return NULL;
-    }
+    struct tokens * result = malloc(sizeof(struct tokens));
+    int con= 0;
+
     char * token = strtok(s1copy, " ");
     while (token != NULL && result->contador < 5) {
         result->token[result->contador] = strdup(token);
-        if (result->token[result->contador] == NULL) {
-            fprintf(stderr, "Error: No se pudo duplicar el token.\n");
-            // Liberar memoria asignada antes de salir
-            for (int i = 0; i < result->contador; i++) {
-                free(result->token[i]);
-            }
-            free(result);
-            free(s1copy);
-            return NULL;
-        }
-        result->contador++;
+        con ++;
         token = strtok(NULL, " ");
     }
-
-    if (result->contador == 5 && token != NULL) {
-    }
-    free(s1copy);
+    result->contador = con;
+    free(s1copy); 
     return result;
 }
 
@@ -286,6 +273,7 @@ bool same_ud_conv(struct tokens * s1, char * s2) {
     struct tokens * unidad = dameTokens(s2);
     char * compare1;
     char * compare2;
+    printf("%d", s1->contador );
 
     if (s1->contador == 3 && unidad->contador == 2) {
         compare1 = s1->token[1]; 
