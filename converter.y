@@ -477,9 +477,9 @@ char * convertir(struct tokens * s1, char * s2){
                 printf("posicion %d", position2);
                 printf(" euros %f\n", quantity);
                 quantity = quantity * medida[position2].conversion;
-                printf("tras conversion %f\n", quantity);
+                printf("tras conversion %.2f\n", quantity);
                 resultado = malloc(100); 
-                snprintf(resultado, 100, "%f %s", quantity, unidad->token[1]);
+                snprintf(resultado, 100, "%.2f %s", quantity, unidad->token[1]);
                 break;
             }
         case 4:
@@ -489,7 +489,7 @@ char * convertir(struct tokens * s1, char * s2){
                 return "";
             }else{   
                 quantity = pasar_ud_final(quantity, unidad->token[0], unidad->token[1]);  
-                snprintf(resultado, 100, "%f %s%s", quantity, prefijo(unidad->token[0], unidad->token[1]), unidad->token[3]);
+                snprintf(resultado, 100, "%.2f %s%s", quantity, prefijo(unidad->token[0], unidad->token[1]), unidad->token[3]);
           } 
             break;    
     }
