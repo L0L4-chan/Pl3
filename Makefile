@@ -1,5 +1,5 @@
 FUENTE = converter
-PRUEBA = ejemplo1.xml
+PRUEBA = ejemplo1.txt
 LIB = lfl
 
 all: compile run

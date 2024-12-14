@@ -28,17 +28,18 @@ void yyerror(const char *s);
 void print_errors();
 
 
-struct tokens dameTokens(char * s1);
+struct tokens * dameTokens(char * s1);
 bool same_ud_conv(struct tokens * s1, char * s2);
 bool same_ud_oper(struct tokens * s1, struct tokens * s2);
-const char* meassureType(const char* s1);
+struct medidas * meassureType(const char* s1);
 int meassureLevel(struct medidas* levels, char* lev);
 float pasar_ud_base(float value, const char* op, const char* s2);
 float pasar_ud_final(float value, const char* op, const char* s2);
 char* prefijo (char * s1, char * s2);
 char * convertir(struct tokens * s1, char * s2);
-struct tokens operacion_prioritaria(struct tokens s1, struct tokens s2, char signo);
-char * token_string(struct tokens s1);
+struct tokens * operacion_prioritaria(struct tokens *s1, struct tokens *s2, char *signo);
+char * token_string(struct tokens *s1);
+void liberarTokens(struct tokens *tokens);
 
 struct medidas distancia[4] = {
     {"metro", 1},
@@ -69,13 +70,6 @@ struct medidas capacidad[4] = {
 };
 %}
 
-%union {
-    char * valString;
-    struct tokens * valToken;
-    int valInt;
-    float valFloat;
-};
-
 %token <valInt> ENTERO
 %token <valFloat> REAL
 %token OPE1 OPE2 PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
@@ -84,17 +78,23 @@ struct medidas capacidad[4] = {
 %type <valString>  conversion unidad ud prefijo operacion 
 %type <valToken> miembro cuenta factor termino
 
+%union {
+    char * valString;
+    struct tokens * valToken;
+    int valInt;
+    float valFloat;
+};
 
 %start S
 
 %%
 
 S:  OPE1 conversion {
-    if (strcmp ($2, "")!=0)
+    if ($2 ==NULL)
         printf("El resultado de la conversión es: %s",$2);
     }
     | OPE2 operacion {
-        if (strcmp ($2, "")!=0)
+        if ($2 ==NULL)
             printf("El resultado de la operación es: %s",$2);
     }
 ;
@@ -106,21 +106,23 @@ conversion:
     }
 ;
 
-
 miembro:
     ENTERO unidad {
-        char * aux = strcat(to_string($1), $2);
+        char aux[100];
+        snprintf(aux, sizeof(aux), "%d %s", $1, $2);  
+        $$ = dameTokens(aux);  
+    }
+    | REAL unidad {
+        char aux[100];
+        snprintf(aux, sizeof(aux), "%f %s", $1, $2); 
         $$ = dameTokens(aux);
-        }
-    |REAL unidad {
-        char * aux =strcat(to_string($1), $2);
-        $$ = dameTokens(aux);
-        }
-    ;
+    };
 
 unidad:
-    ud              {$1;}
-    | prefijo ud    {strcat($1, $2);}
+    ud               { $$ = $1; }
+    | prefijo ud    {char aux[100];
+                    snprintf(aux, sizeof(aux), "%s%s", $1, $2);
+                    $$ = strdup(aux);}
 ;
 
 
@@ -146,7 +148,7 @@ ud:
 prefijo:
     MILI            { $$ = "/ 1000 ";}
     |DECI           { $$ = "/ 10 ";}
-    |CENTI          { $$ = "/ 100 ;"}
+    |CENTI          { $$ = "/ 100 ";}
     |DECA           { $$ = "* 10 ";}
     |HECTO          { $$ = "* 100 ";}
     |KILO           { $$ = "* 1000 ";}
@@ -158,7 +160,7 @@ operacion:
 
 cuenta: 
     cuenta PLUS termino{
-        $$ = operacion_prioritaria($1, $3, "+");
+        $$ = operacion_prioritaria($1,$3, "+");
     }
     |cuenta MINUS termino{
         $$ = operacion_prioritaria($1, $3, "-");
@@ -210,131 +212,165 @@ int main(int argc, char *argv[]) {
 
 void yyerror(const char *s) {
     int aux = error_count;
-    if (error_count < 100) { 
-        char error_msg[200];
-        snprintf(error_msg, sizeof(error_msg), "%s ", s);
-        
+    if (error_count < 100) {         
         for (int i = 0; i < error_count; i++) {
             if (errores[i].line == yylineno) {
-
-                aux = i;
+            free(errores[i].type); // Liberar memoria previa
+            errores[i].type = strdup(s);
+            aux = i;
+            return; 
             }
         }
-        errores[aux].type = strdup(error_msg);
+        errores[aux].type = strdup(s);
         errores[aux].line = yylineno;
-        if ( aux == error_count)error_count++;
+        if (aux == error_count)error_count++;
     }
 }
 
 void print_errors() {
+
     printf("Errores de sintaxis encontrados:\n");
     for (int i = 0; i < error_count; i++) {
         printf("Error: %s en la línea %d\n", errores[i].type, errores[i].line);
+        free(errores[i].type);
+        errores[i].type = NULL; 
     }
 
     error_count = 0;
 }
 
-struct tokens dameTokens(char * s1){   
-    char tokens1[5];
-    int count1 = 0;
-    struct tokens result;
+struct tokens * dameTokens(char * s1){   
+    if(s1==NULL) {
+        return NULL;
+    }
+    char * s1copy = strdup(s1);
+    struct tokens * result;
+    result->contador = 0;
 
-    char * token = strtok(s1, " ");
-    while (token != NULL && count1 < 4) {
-        tokens1[count1++] = token;
+    char * token = strtok(s1copy, " ");
+    while (token != NULL && result->contador < 5) {
+        result->token[result->contador] = strdup(token);
+        result->contador++;
         token = strtok(NULL, " ");
     }
-
-
-    result.token=tokens1;
-    result.count=count1;
-
+    free(s1copy); 
     return result;
 }
 
-
 bool same_ud_conv(struct tokens * s1, char * s2) {
 
-    struct tokens unidad = dameTokens(s2);
+    if(s1 == NULL || s2 == NULL || strcmp(s2, "")==0) {
+        yyerror("Falta elemnto");
+        return false;
+    }
+    struct tokens * unidad = dameTokens(s2);
     char * compare1;
     char * compare2;
 
-    if (s1.countador == 3 && unidad.contador == 2) {
-        compare1 = s1.token[1]; 
-        compare2 = unidad.token[0];  
-    } else if (s1.countador == 5 && unidad.contador == 4) {
-        compare1 = s1.token[3]; 
-        compare2 = unidad.token[2]; 
-    } else if (s1.countador == 3 && unidad.contador == 4) {
-        compare1 = s1.token[1]; 
-        compare2 = unidad.token[2]; 
-    } else if (s1.countador == 5 && unidad.contador == 2) {
-        compare1 = s1.token[3]; 
-        compare2 = unidad.token[0]; 
+    if (s1->contador == 3 && unidad->contador == 2) {
+        compare1 = s1->token[1]; 
+        compare2 = unidad->token[0];  
+    } else if (s1->contador == 5 && unidad->contador == 4) {
+        compare1 = s1->token[3]; 
+        compare2 = unidad->token[2]; 
+    } else if (s1->contador == 3 && unidad->contador == 4) {
+        compare1 = s1->token[1]; 
+        compare2 = unidad->token[2]; 
+    } else if (s1->contador == 5 && unidad->contador == 2) {
+        compare1 = s1->token[3]; 
+        compare2 = unidad->token[0]; 
     } else {
         yyerror("Error: Formato no válido para las cadenas.\n");
+        liberarTokens(unidad); // Liberar memoria
         return false;
     }
 
-    if (strcmp(compare1, compare2) != 0) {
-    char error_msg[100];
-    snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
-    yyerror(error_msg);
-    return false;
-    }
 
+    if (strcmp(compare1, compare2) != 0) {
+        char error_msg[100];
+        snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
+        yyerror(error_msg);
+        return false;
+    }
+    liberarTokens(unidad);
     return true;
+}
+
+void liberarTokens(struct tokens *tokens) {
+    for (int i = 0; i < tokens->contador; i++) {
+        free(tokens->token[i]);
+    }
+    tokens->contador = 0;
 }
 
 bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
+     if (s1 == NULL || s2 == NULL) {
+        yyerror("Faltan argumentos");
+        return false;
+    }
 
     char * compare1;
     char * compare2;
 
-    if (s1.countador == 3 && s2.contador == 3) {
-        compare1 = s1.token[1]; 
-        compare2 = s2.token[1];  
-    } else if (s1.countador == 5 && s2.contador == 5) {
-        compare1 = s1.token[3]; 
-        compare2 = s2.token[3]; 
-    } else if (s1.countador == 3 && s2.contador == 5) {
-        compare1 = s1.token[1]; 
-        compare2 = s2.token[3]; 
-    } else if (s1.countador == 5 && s2.contador == 3) {
-        compare1 = s1.token[3]; 
-        compare2 = s2.token[1]; 
+    if (s1->contador == 3 && s2->contador == 3) {
+        compare1 = s1->token[1]; 
+        compare2 = s2->token[1];  
+    } else if (s1->contador == 5 && s2->contador == 5) {
+        compare1 = s1->token[3]; 
+        compare2 = s2->token[3]; 
+    } else if (s1->contador == 3 && s2->contador == 5) {
+        compare1 = s1->token[1]; 
+        compare2 = s2->token[3]; 
+    } else if (s1->contador == 5 && s2->contador == 3) {
+        compare1 = s1->token[3]; 
+        compare2 = s2->token[1]; 
     } else {
-        yyerror("Error: Formato no válido para las cadenas.\n");
+        yyerror("Error: Formato no válido para las cadenas.");
         return false;
     }
 
     if (strcmp(compare1, compare2) != 0) {
-    char error_msg[100];
-    snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
-    yyerror(error_msg);
-    return false;
+        char error_msg[100];
+        snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
+        yyerror(error_msg);
+        return false;
     }
 
     return true;
 }
 
-const char* meassureType(const char* s1) {
-    if (strcmp(s1, "dinero") == 0) return monedas;
-    if (strcmp(s1, "peso") == 0) return peso;
-    if (strcmp(s1, "capacidad") == 0) return capacidad;
-    if (strcmp(s1, "distancia") == 0) return distancia;
+struct medidas* meassureType(const char* s1) {
+    if (s1 == NULL) {
+        yyerror("No existe tipo de medida");
+        return NULL;
+    }
+
+    if (strcmp(s1, "dinero") == 0) {
+        return monedas;
+    } else if (strcmp(s1, "peso") == 0) {
+        return peso;
+    } else if (strcmp(s1, "capacidad") == 0) {
+        return capacidad;
+    } else if (strcmp(s1, "distancia") == 0) {
+        return distancia;
+    }
+
+    char error_msg[100];
+    snprintf(error_msg, sizeof(error_msg), "Tipo de medida no reconocido.");
+    yyerror(error_msg);
+
     return NULL;
 }
 
- int meassureLevel(struct medidas * levels, char* lev){
+int meassureLevel(struct medidas * levels, char* lev){
     for(int i=0; i<4; i++){
-        if(strcmp(levels[i].name, lev) == 0){
+        if(strcmp(levels[i].nombre, lev) == 0){
             return i;
             break;
         }
     }
  }
+
 
 float pasar_ud_base(float value, const char* op, const char* s2) {
     float result;
@@ -357,41 +393,42 @@ float pasar_ud_final(float value, const char* op, const char* s2) {
 }
 
 char* prefijo (char * s1, char * s2){
+    char concatenated[100]; 
+    snprintf(concatenated, sizeof(concatenated), "%s%s", s1, s2);
 
-    if (strcmp ((strcat(s1,s2)), "/1000") == 0)
-        return "mili";
-    else if (strcmp ((strcat(s1,s2)), "/100") == 0)
-        return "centi";
-    else if (strcmp ((strcat(s1,s2)), "/10") == 0)
-        return "deci";    
-    else if (strcmp ((strcat(s1,s2)), "*1000") == 0)
-        return "kilo";
-    else if (strcmp ((strcat(s1,s2)), "*100") == 0)
-        return "hecto";
-    else if (strcmp ((strcat(s1,s2)), "*10") == 0)
-        return "deca"; 
+        if (strcmp(concatenated, "/1000") == 0){
+            return "mili";
+        }else if (strcmp(concatenated, "/100") == 0){
+            return "centi";
+        }else if (strcmp(concatenated, "/10") == 0){
+            return "deci";    
+        }else if (strcmp(concatenated, "*1000") == 0){
+            return "kilo";
+        }else if (strcmp(concatenated, "*100") == 0){
+            return "hecto";
+        }else if (strcmp(concatenated, "*10") == 0){
+            return "deca"; 
+        }
+    return NULL;
 }
 
 
 char * convertir(struct tokens * s1, char * s2){
 
-    struct tokens unidad = dameTokens(s2)
-    char * compare1;
-    char * compare2;
-
+    struct tokens * unidad = dameTokens(s2);
     int position1;
     int position2;
 
     float quantity;
     char * resultado;
-    struct medidas medida[4];
+    struct medidas * medida;
 
 
-    switch(s1.contador) {
+    switch(s1->contador) {
         case 3:
-            medida = meassureType(s1.token[1]);   
-            position1 = meassureLevel(medida, s1.token[2]);
-            quantity = atof(s1.token[0]);
+            medida = meassureType(s1->token[1]); 
+            position1 = meassureLevel(medida, s1->token[2]);  
+            quantity = atof(s1->token[0]); 
 
             if(position1!=0){
                 quantity = quantity * medida[position1].conversion;
@@ -399,149 +436,146 @@ char * convertir(struct tokens * s1, char * s2){
             break;
 
         case 5:
-            medida = meassureType(s1.token[3]);  
-            position1 = meassureLevel(medida, s1.token[4]);
-            quantity = atof(s1.token[0]);
+             medida = meassureType(s1->token[3]);  
+            position1 = meassureLevel(medida, s1->token[4]); 
+            quantity = atof(s1->token[0]);
 
-            if(position1!=0 || (strcmp(s1.token[3], "dinero")==0)){
+            if(position1!=0 || (strcmp(s1->token[3], "dinero")==0)){
                 yyerror("no puede tener prefijo");
                 return "";
             }else{
-                quantity = pasar_ud_base(quantity, s1.token[1], s1.token[2]);
+                quantity = pasar_ud_base(quantity, s1->token[1], s1->token[2]);
             }
             break;
     }
 
-    switch(unidad.contador){
+    switch(unidad->contador){
         case 2:
-            position2 = meassureLevel(medida, unidad.token[1]);
+            position2 = meassureLevel(medida, unidad->token[1]);
             if(position2!=0){
                 quantity = quantity * medida[position2].conversion;
-                resultado = to_string (strcat(quantity,unidad.token[1]))
+                resultado = malloc(100); 
+                snprintf(resultado, 100, "%f %s", quantity, unidad->token[1]);
                 break;
             }
         case 4:
-            position2 = meassureLevel(medida, unidad.token[3]);
+            position2 = meassureLevel(medida, unidad->token[3]);
             if(position2!=0){
                 yyerror("no puede tener prefijo");
                 return "";
             }else{   
-                quantity = pasar_ud_final(quantity, unidad.token[0], unidad.token[1]); 
-                resultado = to_string (strcat(quantity,strcat(prefijo(unidad.token[0], unidad.token[1]),unidad.token[3])));
-            } 
-            break;
-        
+                quantity = pasar_ud_final(quantity, unidad->token[0], unidad->token[1]); 
+                resultado = malloc(100);  
+                snprintf(resultado, 100, "%f %s%s", quantity, prefijo(unidad->token[0], unidad->token[1]), unidad->token[3]);
+          } 
+            break;    
     }
-
     return resultado;
 }
 
-struct token operacion_prioritaria(struct tokens s1, struct tokens s2, char * signo) {
+struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, char * signo) {
 
-    struct tokens miembro;  
+    struct tokens* miembro = malloc(sizeof(struct tokens)); 
     int position1;
     int position2;
-    float quantity1;
-    float quantity2;
-    struct medidas medida[4];
+    float quantity1 = atof(s1->token[0]);
+    float quantity2 = atof(s2->token[0]);
     float resultado;
+    struct medidas *medida;
     char * resultado_char;
-    char unidad_resultado[4];
 
     if (same_ud_oper(s1, s2)){
-        switch(s1.contador) {
+        switch(s1->contador) {
             case 3:
-                medida = meassureType(s1.token[1]);   
-                position1 = meassureLevel(medida, s1.token[2]);
-                quantity1 = atof(s1.token[0]);
+                medida = meassureType(s1->token[1]);   
+                position1 = meassureLevel(medida, s1->token[2]);
 
                 if(position1!=0){
                     quantity1 = quantity1 * medida[position1].conversion;
                 }
-                unidad_resultado[0] = s1.token[1];
-                unidad_resultado[1] = s1.token[2];
+                miembro->token[1] = s1->token[1];
+                miembro->token[2] = s1->token[2];
+                miembro->contador = 3;
                 break;
 
             case 5:
-                medida = meassureType(s1.token[3]);  
-                position1 = meassureLevel(medida, s1.token[4]);
-                quantity1 = atof(s1.token[0]);
+                medida = meassureType(s1->token[3]);  
+                position1 = meassureLevel(medida, s1->token[4]);
 
-                if(position1!=0 || (strcmp(s1.token[3], "dinero")==0)){
+                if(position1!=0 || (strcmp(s1->token[3], "dinero")==0)){
                     yyerror("no puede tener prefijo");
-                    return "";
+                    return NULL;
                 }else{
-                    quantity1 = pasar_ud_base(quantity1, s1.token[1], s1.token[2]);
+                    quantity1 = pasar_ud_base(quantity1, s1->token[1], s1->token[2]);
                 }
-                unidad_resultado[0] = s1.token[1];
-                unidad_resultado[1] = s1.token[2];
-                unidad_resultado[2] = s1.token[3];
-                unidad_resultado[3] = s1.token[4];
-
+                miembro->token[1] = s1->token[1];
+                miembro->token[2] = s1->token[2];
+                miembro->token[3] = s1->token[3];
+                miembro->token[4] = s1->token[4];
+                miembro->contador = 5;
                 break;
         }
 
-        switch(s2.contador) {
-            case 3:
-                medida = meassureType(s2.token[1]);   
-                position2 = meassureLevel(medida, s2.token[2]);
-                quantity2 = atof(s1.token[0]);
+        switch(s2->contador) {
+            case 3:   
+                position2 = meassureLevel(medida, s2->token[2]);
 
                 if(position1!=0){
                     quantity2 = quantity2 * medida[position2].conversion;
                 }
 
-            case 5:
-                medida = meassureType(s2.token[3]);  
-                position2 = meassureLevel(medida, s2.token[4]);
-                quantity2 = atof(s2.token[0]);
+            case 5:  
+                position2 = meassureLevel(medida, s2->token[4]);
 
-                if(position2!=0 || (strcmp(s2.token[3], "dinero")==0)){
+                if(position2!=0 || (strcmp(s2->token[3], "dinero")==0)){
                     yyerror("no puede tener prefijo");
-                    return "";
+                    return NULL;
                 }else{
-                    quantity2 = pasar_ud_base(quantity2, s2.token[1], s2.token[2]);
+                    quantity2 = pasar_ud_base(quantity2, s2->token[1], s2->token[2]);
                 }
 
             break;
         }
 
-         if(strcmp(signo,"+")==0)resultado = quantity1 + quantity2;
+        if(strcmp(signo,"+")==0)resultado = quantity1 + quantity2;
         else if(strcmp(signo,"-")==0)resultado = quantity1 - quantity2;
         else if(strcmp(signo,"*")==0) resultado = quantity1 * quantity2;
         else if(strcmp(signo,"/")==0) resultado = quantity1 / quantity2;
 
-        if (unidad_resultado[2]==NULL && unidad_resultado[3]==NULL){
+        if (5!=s1->contador){
             if(position1!=0){
             resultado = resultado * medida[position1].conversion;
           }
-            miembro.token[0] = to_string(resultado);
-            miembro.token[1] = unidad_resultado[0] 
-            miembro.token[2] = unidad_resultado[1];
-            miembro.contador = 3;
         }
         else {
-            resultado = pasar_ud_final(resultado, unidad_resultado[2], unidad_resultado[3]);
-            miembro.token[0] = to_string(resultado);
-            miembro.token[1] = unidad_resultado[0];
-            miembro.token[2] = unidad_resultado[1];
-            miembro.token[3] = unidad_resultado[2];
-            miembro.token[4] = unidad_resultado[3];
-            miembro.contador = 5; 
+            resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]); 
           
         }
+    
+        snprintf(miembro->token[0], sizeof(miembro->token[0]), "%.2f", resultado);
+        return miembro;
+    } else {
+        yyerror("Las unidades de medida deben ser iguales.");
+        free(miembro); 
+        return NULL;
     }
-    return miembro;
+
+     
 }
 
-char * token_string(struct tokens s1){
-
-    if (s1.contador == 3){
-        return strcat(s1.token[0],s1.token[2]);
+char* token_string(struct tokens *s1) {
+    
+    char *result = malloc(200 * sizeof(char));
+   if (s1->contador == 3) {
+        snprintf(result, 200, "%s %s", s1->token[0], s1->token[2]);
+    } else if (s1->contador == 5) {
+        char* prefix = prefijo(s1->token[1], s1->token[2]);
+        if (prefix == NULL) {
+            free(result);  
+            return NULL; 
+        }
+        snprintf(result, 200, "%s %s%s", s1->token[0], prefix, s1->token[3]);
+        free(prefix);
     }
-    else if (s1.contador == 5){
-        char * prefix = prefijo(s1.token[1], s1.token[2]);
-        char * respuesta = strcat(s1.token[0], prefix);
-        respuesta = strcat(respuesta, s1.token[3]);
-    }
+    return result;  
 }
