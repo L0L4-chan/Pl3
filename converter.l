@@ -10,7 +10,8 @@ void showError(char* arg);
 
 ope1    "conversion"
 ope2    "calculo"
-float   "-"?[0-9]+(\.[0-9]+)?
+float   -?[0-9]+(\.[0-9]+)?
+arrow   "->"
 euro    "EUR"
 dollar  "USD"
 gbp     "GBP" 
@@ -19,20 +20,20 @@ gramo   "gramo"
 stone   "piedra"
 pound   "libra"
 onza    "onza"
-litro   " litro" 
-pinta   " pinta"
-gallon  " galon"
-barril  " barril"
-metro   " metro"
-yarda   " yarda"
-pie     " pie"
-mile    " milla "
-mili    " mili "
-deci    " deci "
-deca    " deca "
-centi   " centi "
-kilo    " kilo "
-hecto   " hecto "
+litro   "litro" 
+pinta   "pinta"
+gallon  "galon"
+barril  "barril"
+metro   "metro"
+yarda   "yarda"
+pie     "pie"
+mile    "milla"
+mili    "mili"
+deci    "deci"
+deca    "deca"
+centi   "centi"
+kilo    "kilo"
+hecto   "hecto"
 
 %%
 
@@ -45,7 +46,7 @@ hecto   " hecto "
 "/"                      { printf("TOKEN: / -> %s\n", yytext);return DIV; }
 "("                      { printf("TOKEN: parentesis1 -> %s\n", yytext);return LPAREN; }
 ")"                      { printf("TOKEN: parentesis1 -> %s\n", yytext);return RPAREN; }
-">>"                     { printf("TOKEN: arrow -> %s\n", yytext);return ARROW; }
+"->"                     { printf("TOKEN: arrow -> %s\n", yytext); return ARROW; }
 {euro}                   { printf("TOKEN: euro -> %s\n", yytext);return EURO; }
 {dollar}                 { return DOLLAR; }
 {gbp}                    { return GBP; }
@@ -70,7 +71,8 @@ hecto   " hecto "
 {hecto}                  { return HECTO; }
 
 [ \t\r\n]+               {  }
-.                        { showError(yytext); }
+.                        { printf("LEXICAL ERROR: '%s' at line %d\n", yytext, yylineno); }
+
 
 %%
 

@@ -125,15 +125,15 @@ ud:
     | GBP           { $$ = "dinero gbp ";}
     | DOLLAR        { $$ = "dinero dollar"; }
     | EURO          { $$ = "dinero euro ";}
-    | GRAMO         { $$ = "peso gr ";}
+    | GRAMO         { $$ = "peso gramo ";}
     | STONE         { $$ = "peso stone ";}
     | POUND         { $$ = "peso libra ";}
     | ONZA          { $$ = "peso onza ";}
-    | LITRO         { $$ = "capacidad l ";}
+    | LITRO         { $$ = "capacidad litro ";}
     | PINTA         { $$ = "capacidad pinta ";}
     | GALLON        { $$ = "capacidad galon ";}
     | BARRIL        { $$ = "capacidad barril ";}
-    | METRO         { $$ = "distancia m ";}
+    | METRO         { $$ = "distancia metro ";}
     | YARDA         { $$ = "distancia yarda ";}
     | PIE           { $$ = "distancia pie ";}
     | MILE          { $$ = "distancia milla ";}
@@ -232,7 +232,7 @@ void print_errors() {
 
     error_count = 0;
 }
-
+/*
 struct tokens * dameTokens(char * s1){   
     if(s1==NULL) {
         return NULL;
@@ -250,6 +250,84 @@ struct tokens * dameTokens(char * s1){
     free(s1copy); 
     return result;
 }
+*/
+
+struct tokens * dameTokens(char * s1) {
+    if (s1 == NULL) {
+        fprintf(stderr, "Depuración: La cadena de entrada es NULL.\n");
+        return NULL;
+    }
+
+    // Reservar memoria para la estructura tokens
+    struct tokens * result = (struct tokens *)malloc(sizeof(struct tokens));
+    if (result == NULL) {
+        fprintf(stderr, "Error: No se pudo asignar memoria para tokens.\n");
+        return NULL;
+    }
+    fprintf(stderr, "Depuración: Memoria para la estructura tokens asignada correctamente.\n");
+
+    // Inicializar el contador y los punteros en la estructura
+    result->contador = 0;
+    for (int i = 0; i < 5; i++) {
+        result->token[i] = NULL;
+    }
+    fprintf(stderr, "Depuración: Inicialización de la estructura completada.\n");
+
+    // Crear una copia de s1 para usar con strtok
+    char * s1copy = strdup(s1);
+    if (s1copy == NULL) {
+        fprintf(stderr, "Error: No se pudo duplicar la cadena.\n");
+        free(result);
+        return NULL;
+    }
+    fprintf(stderr, "Depuración: Copia de la cadena creada: \"%s\".\n", s1copy);
+
+    // Tokenizar la cadena
+    char * token = strtok(s1copy, " ");
+    while (token != NULL && result->contador < 5) {
+        fprintf(stderr, "Depuración: Token encontrado: \"%s\".\n", token);
+
+        result->token[result->contador] = strdup(token);
+        if (result->token[result->contador] == NULL) {
+            fprintf(stderr, "Error: No se pudo duplicar el token.\n");
+            // Liberar memoria asignada antes de salir
+            for (int i = 0; i < result->contador; i++) {
+                free(result->token[i]);
+            }
+            free(result);
+            free(s1copy);
+            return NULL;
+        }
+        fprintf(stderr, "Depuración: Token duplicado y almacenado en la posición %d.\n", result->contador);
+
+        result->contador++;
+        token = strtok(NULL, " ");
+    }
+
+    if (result->contador == 5 && token != NULL) {
+        fprintf(stderr, "Depuración: Se alcanzó el límite de tokens (5). Ignorando el resto.\n");
+    }
+
+    // Liberar memoria de s1copy
+    free(s1copy);
+    fprintf(stderr, "Depuración: Memoria temporal liberada.\n");
+
+    // Mensaje final mostrando el estado de result
+    fprintf(stderr, "Depuración: Estado final de result:\n");
+    fprintf(stderr, "  Contador: %d\n", result->contador);
+    for (int i = 0; i < result->contador; i++) {
+        fprintf(stderr, "  Token[%d]: \"%s\"\n", i, result->token[i]);
+    }
+    for (int i = result->contador; i < 5; i++) {
+        fprintf(stderr, "  Token[%d]: NULL\n", i);
+    }
+
+    fprintf(stderr, "Depuración: Total de tokens encontrados: %d.\n", result->contador);
+    return result;
+}
+
+
+
 
 bool same_ud_conv(struct tokens * s1, char * s2) {
 
@@ -467,8 +545,15 @@ char * convertir(struct tokens * s1, char * s2){
 }
 
 struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, char * signo) {
+    fprintf(stderr, "Depuración op_prioritaria: Inicio de la función.\n");
 
-    struct tokens* miembro = malloc(sizeof(struct tokens)); 
+    struct tokens* miembro = malloc(sizeof(struct tokens));
+    if (miembro == NULL) {
+        fprintf(stderr, "Depuración op_prioritaria: Error al asignar memoria para miembro.\n");
+        return NULL;
+    }
+    fprintf(stderr, "Depuración op_prioritaria: Memoria para miembro asignada correctamente.\n");
+
     int position1;
     int position2;
     float quantity1 = atof(s1->token[0]);
@@ -477,30 +562,44 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
     struct medidas *medida;
     char * resultado_char;
 
-    if (same_ud_oper(s1, s2)){
-        switch(s1->contador) {
+    fprintf(stderr, "Depuración op_prioritaria: Valores iniciales - quantity1: %.2f, quantity2: %.2f, signo: %s.\n", quantity1, quantity2, signo);
+
+    if (same_ud_oper(s1, s2)) {
+        fprintf(stderr, "Depuración op_prioritaria: Las unidades de medida son compatibles.\n");
+
+        switch (s1->contador) {
             case 3:
-                medida = meassureType(s1->token[1]);   
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s1->contador = 3.\n");
+
+                medida = meassureType(s1->token[1]);
                 position1 = meassureLevel(medida, s1->token[2]);
 
-                if(position1!=0){
+                if (position1 != 0) {
                     quantity1 = quantity1 * medida[position1].conversion;
+                    fprintf(stderr, "Depuración op_prioritaria: quantity1 convertido a %.2f con position1 = %d.\n", quantity1, position1);
                 }
+
                 miembro->token[1] = s1->token[1];
                 miembro->token[2] = s1->token[2];
                 miembro->contador = 3;
                 break;
 
             case 5:
-                medida = meassureType(s1->token[3]);  
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s1->contador = 5.\n");
+
+                medida = meassureType(s1->token[3]);
                 position1 = meassureLevel(medida, s1->token[4]);
 
-                if(position1!=0 || (strcmp(s1->token[3], "dinero")==0)){
+                if (position1 != 0 || (strcmp(s1->token[3], "dinero") == 0)) {
+                    fprintf(stderr, "Depuración op_prioritaria: Prefijo inválido en s1.\n");
                     yyerror("no puede tener prefijo");
+                    free(miembro);
                     return NULL;
-                }else{
+                } else {
                     quantity1 = pasar_ud_base(quantity1, s1->token[1], s1->token[2]);
+                    fprintf(stderr, "Depuración op_prioritaria: quantity1 convertido a base %.2f.\n", quantity1);
                 }
+
                 miembro->token[1] = s1->token[1];
                 miembro->token[2] = s1->token[2];
                 miembro->token[3] = s1->token[3];
@@ -509,52 +608,73 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
                 break;
         }
 
-        switch(s2->contador) {
-            case 3:   
+        switch (s2->contador) {
+            case 3:
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s2->contador = 3.\n");
+
                 position2 = meassureLevel(medida, s2->token[2]);
-
-                if(position1!=0){
+                if (position2 != 0) {
                     quantity2 = quantity2 * medida[position2].conversion;
+                    fprintf(stderr, "Depuración op_prioritaria: quantity2 convertido a %.2f con position2 = %d.\n", quantity2, position2);
                 }
+                break;
 
-            case 5:  
+            case 5:
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s2->contador = 5.\n");
+
                 position2 = meassureLevel(medida, s2->token[4]);
-
-                if(position2!=0 || (strcmp(s2->token[3], "dinero")==0)){
+                if (position2 != 0 || (strcmp(s2->token[3], "dinero") == 0)) {
+                    fprintf(stderr, "Depuración op_prioritaria: Prefijo inválido en s2.\n");
                     yyerror("no puede tener prefijo");
+                    free(miembro);
                     return NULL;
-                }else{
+                } else {
                     quantity2 = pasar_ud_base(quantity2, s2->token[1], s2->token[2]);
+                    fprintf(stderr, "Depuración op_prioritaria: quantity2 convertido a base %.2f.\n", quantity2);
                 }
-
-            break;
+                break;
         }
 
-        if(strcmp(signo,"+")==0)resultado = quantity1 + quantity2;
-        else if(strcmp(signo,"-")==0)resultado = quantity1 - quantity2;
-        else if(strcmp(signo,"*")==0) resultado = quantity1 * quantity2;
-        else if(strcmp(signo,"/")==0) resultado = quantity1 / quantity2;
-
-        if (5!=s1->contador){
-            if(position1!=0){
-            resultado = resultado * medida[position1].conversion;
-          }
-        }
+        if (strcmp(signo, "+") == 0) resultado = quantity1 + quantity2;
+        else if (strcmp(signo, "-") == 0) resultado = quantity1 - quantity2;
+        else if (strcmp(signo, "*") == 0) resultado = quantity1 * quantity2;
+        else if (strcmp(signo, "/") == 0) resultado = quantity1 / quantity2;
         else {
-            resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]); 
-          
+            fprintf(stderr, "Depuración op_prioritaria: Operador no reconocido.\n");
+            free(miembro);
+            return NULL;
         }
-    
+
+        fprintf(stderr, "Depuración op_prioritaria: Resultado de la operación %.2f.\n", resultado);
+        fprintf(stderr, "%d\n", position1);
+        fprintf(stderr, "%d\n", s1->contador);
+
+        if (s1->contador != 5) {
+            printf("Depuración op_prioritaria: d");
+            if (position1 != 0) {
+                resultado = resultado * medida[position1].conversion;
+                fprintf(stderr, "Depuración op_prioritaria: Resultado ajustado a %.2f con position1.\n", resultado);
+            }
+            printf("Depuración op_prioritaria: 1");
+        } else {
+            printf("Depuración op_prioritaria: q");
+            resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]);
+            fprintf(stderr, "Depuración op_prioritaria: Resultado convertido a unidad final %.2f.\n", resultado);
+        }
+        printf("Depuración op_prioritaria: 2");
         snprintf(miembro->token[0], sizeof(miembro->token[0]), "%.2f", resultado);
+        fprintf(stderr, "Depuración op_prioritaria: Resultado formateado en miembro->token[0] = \"%s\".\n", miembro->token[0]);
+
         return miembro;
     } else {
+        fprintf(stderr, "Depuración op_prioritaria: Las unidades de medida no son compatibles.\n");
         yyerror("Las unidades de medida deben ser iguales.");
-        free(miembro); 
+        free(miembro);
         return NULL;
     }
 
-     
 }
+
 
 char* token_string(struct tokens *s1) {
     
