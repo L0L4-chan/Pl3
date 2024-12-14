@@ -1206,7 +1206,7 @@ yyreduce:
   case 2: /* S: OPE1 conversion  */
 #line 91 "converter.y"
                     {
-    if ((yyvsp[0].valString) ==NULL)
+    if ((yyvsp[0].valString) !=NULL)
         printf("El resultado de la conversión es: %s",(yyvsp[0].valString));
     }
 #line 1213 "converter.tab.c"
@@ -1231,9 +1231,9 @@ yyreduce:
 
   case 5: /* miembro: REAL unidad  */
 #line 109 "converter.y"
-                    {
+                     {
         char aux[100];
-        printf(aux, sizeof(aux), "%f %s", (yyvsp[-1].valFloat), (yyvsp[0].valString)); 
+        snprintf(aux, sizeof(aux), "%f %s", (yyvsp[-1].valFloat), (yyvsp[0].valString)); 
         (yyval.valToken) = dameTokens(aux);
     }
 #line 1240 "converter.tab.c"
@@ -1241,7 +1241,7 @@ yyreduce:
 
   case 6: /* unidad: ud  */
 #line 116 "converter.y"
-                    {(yyval.valString) = (yyvsp[0].valString); }
+                     { (yyval.valString) = (yyvsp[0].valString); }
 #line 1246 "converter.tab.c"
     break;
 
@@ -1255,133 +1255,133 @@ yyreduce:
 
   case 8: /* ud: YEN  */
 #line 124 "converter.y"
-                    { (yyval.valString) = strdup("dinero yen ");}
+                    { (yyval.valString) = "dinero yen ";}
 #line 1260 "converter.tab.c"
     break;
 
   case 9: /* ud: GBP  */
 #line 125 "converter.y"
-                    { (yyval.valString) = strdup("dinero gbp ");}
+                    { (yyval.valString) = "dinero gbp ";}
 #line 1266 "converter.tab.c"
     break;
 
   case 10: /* ud: DOLLAR  */
 #line 126 "converter.y"
-                    { (yyval.valString) = strdup("dinero dollar"); }
+                    { (yyval.valString) = "dinero dolar"; }
 #line 1272 "converter.tab.c"
     break;
 
   case 11: /* ud: EURO  */
 #line 127 "converter.y"
-                    { (yyval.valString) = strdup("dinero euro ");}
+                    { (yyval.valString) = "dinero euro ";}
 #line 1278 "converter.tab.c"
     break;
 
   case 12: /* ud: GRAMO  */
 #line 128 "converter.y"
-                    { (yyval.valString) = strdup("peso gramo ");}
+                    { (yyval.valString) = "peso gramo ";}
 #line 1284 "converter.tab.c"
     break;
 
   case 13: /* ud: STONE  */
 #line 129 "converter.y"
-                    { (yyval.valString) = strdup("peso stone ");}
+                    { (yyval.valString) = "peso stone ";}
 #line 1290 "converter.tab.c"
     break;
 
   case 14: /* ud: POUND  */
 #line 130 "converter.y"
-                    { (yyval.valString) = strdup("peso libra ");}
+                    { (yyval.valString) = "peso libra ";}
 #line 1296 "converter.tab.c"
     break;
 
   case 15: /* ud: ONZA  */
 #line 131 "converter.y"
-                    { (yyval.valString) = strdup("peso onza ");}
+                    { (yyval.valString) = "peso onza ";}
 #line 1302 "converter.tab.c"
     break;
 
   case 16: /* ud: LITRO  */
 #line 132 "converter.y"
-                    { (yyval.valString) = strdup("capacidad litro ");}
+                    { (yyval.valString) = "capacidad litro ";}
 #line 1308 "converter.tab.c"
     break;
 
   case 17: /* ud: PINTA  */
 #line 133 "converter.y"
-                    { (yyval.valString) = strdup("capacidad pinta ");}
+                    { (yyval.valString) = "capacidad pinta ";}
 #line 1314 "converter.tab.c"
     break;
 
   case 18: /* ud: GALLON  */
 #line 134 "converter.y"
-                    { (yyval.valString) = strdup("capacidad galon ");}
+                    { (yyval.valString) = "capacidad galon ";}
 #line 1320 "converter.tab.c"
     break;
 
   case 19: /* ud: BARRIL  */
 #line 135 "converter.y"
-                    { (yyval.valString) = strdup("capacidad barril ");}
+                    { (yyval.valString) = "capacidad barril ";}
 #line 1326 "converter.tab.c"
     break;
 
   case 20: /* ud: METRO  */
 #line 136 "converter.y"
-                    { (yyval.valString) = strdup("distancia metro ");}
+                    { (yyval.valString) = "distancia metro ";}
 #line 1332 "converter.tab.c"
     break;
 
   case 21: /* ud: YARDA  */
 #line 137 "converter.y"
-                    { (yyval.valString) = strdup("distancia yarda ");}
+                    { (yyval.valString) = "distancia yarda ";}
 #line 1338 "converter.tab.c"
     break;
 
   case 22: /* ud: PIE  */
 #line 138 "converter.y"
-                    { (yyval.valString) = strdup("distancia pie ");}
+                    { (yyval.valString) = "distancia pie ";}
 #line 1344 "converter.tab.c"
     break;
 
   case 23: /* ud: MILE  */
 #line 139 "converter.y"
-                    { (yyval.valString) = strdup("distancia milla ");}
+                    { (yyval.valString) = "distancia milla ";}
 #line 1350 "converter.tab.c"
     break;
 
   case 24: /* prefijo: MILI  */
 #line 143 "converter.y"
-                    { (yyval.valString) = strdup("/ 1000 ");}
+                    { (yyval.valString) = "/ 1000 ";}
 #line 1356 "converter.tab.c"
     break;
 
   case 25: /* prefijo: DECI  */
 #line 144 "converter.y"
-                    { (yyval.valString) = strdup("/ 10 ");}
+                    { (yyval.valString) = "/ 10 ";}
 #line 1362 "converter.tab.c"
     break;
 
   case 26: /* prefijo: CENTI  */
 #line 145 "converter.y"
-                    { (yyval.valString) = strdup("/ 100 ");}
+                    { (yyval.valString) = "/ 100 ";}
 #line 1368 "converter.tab.c"
     break;
 
   case 27: /* prefijo: DECA  */
 #line 146 "converter.y"
-                    { (yyval.valString) = strdup("* 10 ");}
+                    { (yyval.valString) = "* 10 ";}
 #line 1374 "converter.tab.c"
     break;
 
   case 28: /* prefijo: HECTO  */
 #line 147 "converter.y"
-                    { (yyval.valString) = strdup("* 100 ");}
+                    { (yyval.valString) = "* 100 ";}
 #line 1380 "converter.tab.c"
     break;
 
   case 29: /* prefijo: KILO  */
 #line 148 "converter.y"
-                    { (yyval.valString) = strdup("* 1000 ");}
+                    { (yyval.valString) = "* 1000 ";}
 #line 1386 "converter.tab.c"
     break;
 
@@ -1697,27 +1697,50 @@ void print_errors() {
     error_count = 0;
 }
 
-struct tokens * dameTokens(char * s1){   
-    if(s1==NULL) {
+struct tokens * dameTokens(char * s1) {
+    if (s1 == NULL) {
+        fprintf(stderr, "Depuración: La cadena de entrada es NULL.\n");
         return NULL;
     }
-    char * s1copy = strdup(s1);
-    struct tokens * result = malloc(sizeof(struct tokens));
-    int con= 0;
 
+    struct tokens * result = (struct tokens *)malloc(sizeof(struct tokens));
+    if (result == NULL) {
+        return NULL;
+    }
+    result->contador = 0;
+    for (int i = 0; i < 5; i++) {
+        result->token[i] = NULL;
+    }
+    char * s1copy = strdup(s1);
+    if (s1copy == NULL) {
+        free(result);
+        return NULL;
+    }
     char * token = strtok(s1copy, " ");
     while (token != NULL && result->contador < 5) {
         result->token[result->contador] = strdup(token);
-        con ++;
+        if (result->token[result->contador] == NULL) {
+            fprintf(stderr, "Error: No se pudo duplicar el token.\n");
+            // Liberar memoria asignada antes de salir
+            for (int i = 0; i < result->contador; i++) {
+                free(result->token[i]);
+            }
+            free(result);
+            free(s1copy);
+            return NULL;
+        }
+        result->contador++;
         token = strtok(NULL, " ");
     }
-    result->contador = con;
-    free(s1copy); 
+
+    if (result->contador == 5 && token != NULL) {
+        fprintf(stderr, "Depuración: Se alcanzó el límite de tokens (5). Ignorando el resto.\n");
+    }
+    free(s1copy);
     return result;
 }
 
 bool same_ud_conv(struct tokens * s1, char * s2) {
-
     if(s1 == NULL || s2 == NULL || strcmp(s2, "")==0) {
         yyerror("Falta elemnto");
         return false;
@@ -1725,7 +1748,6 @@ bool same_ud_conv(struct tokens * s1, char * s2) {
     struct tokens * unidad = dameTokens(s2);
     char * compare1;
     char * compare2;
-    printf("%d", s1->contador );
 
     if (s1->contador == 3 && unidad->contador == 2) {
         compare1 = s1->token[1]; 
@@ -1823,8 +1845,11 @@ struct medidas* meassureType(const char* s1) {
 }
 
 int meassureLevel(struct medidas * levels, char* lev){
+    
+    printf("%s", lev);
     for(int i=0; i<4; i++){
         if(strcmp(levels[i].nombre, lev) == 0){
+            printf("%d\n", i);
             return i;
             break;
         }
@@ -1913,7 +1938,10 @@ char * convertir(struct tokens * s1, char * s2){
         case 2:
             position2 = meassureLevel(medida, unidad->token[1]);
             if(position2!=0){
+                printf("posicion %d", position2);
+                printf(" euros %f\n", quantity);
                 quantity = quantity * medida[position2].conversion;
+                printf("tras conversion %f\n", quantity);
                 resultado = malloc(100); 
                 snprintf(resultado, 100, "%f %s", quantity, unidad->token[1]);
                 break;
@@ -1929,12 +1957,20 @@ char * convertir(struct tokens * s1, char * s2){
           } 
             break;    
     }
+    printf(" el resultado aqui es %s\n",resultado);
     return resultado;
 }
 
 struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, char * signo) {
+    fprintf(stderr, "Depuración op_prioritaria: Inicio de la función.\n");
 
-    struct tokens* miembro = malloc(sizeof(struct tokens)); 
+    struct tokens* miembro = malloc(sizeof(struct tokens));
+    if (miembro == NULL) {
+        fprintf(stderr, "Depuración op_prioritaria: Error al asignar memoria para miembro.\n");
+        return NULL;
+    }
+    fprintf(stderr, "Depuración op_prioritaria: Memoria para miembro asignada correctamente.\n");
+
     int position1;
     int position2;
     float quantity1 = atof(s1->token[0]);
@@ -1943,30 +1979,44 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
     struct medidas *medida;
     char * resultado_char;
 
-    if (same_ud_oper(s1, s2)){
-        switch(s1->contador) {
+    fprintf(stderr, "Depuración op_prioritaria: Valores iniciales - quantity1: %.2f, quantity2: %.2f, signo: %s.\n", quantity1, quantity2, signo);
+
+    if (same_ud_oper(s1, s2)) {
+        fprintf(stderr, "Depuración op_prioritaria: Las unidades de medida son compatibles.\n");
+
+        switch (s1->contador) {
             case 3:
-                medida = meassureType(s1->token[1]);   
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s1->contador = 3.\n");
+
+                medida = meassureType(s1->token[1]);
                 position1 = meassureLevel(medida, s1->token[2]);
 
-                if(position1!=0){
+                if (position1 != 0) {
                     quantity1 = quantity1 * medida[position1].conversion;
+                    fprintf(stderr, "Depuración op_prioritaria: quantity1 convertido a %.2f con position1 = %d.\n", quantity1, position1);
                 }
+
                 miembro->token[1] = s1->token[1];
                 miembro->token[2] = s1->token[2];
                 miembro->contador = 3;
                 break;
 
             case 5:
-                medida = meassureType(s1->token[3]);  
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s1->contador = 5.\n");
+
+                medida = meassureType(s1->token[3]);
                 position1 = meassureLevel(medida, s1->token[4]);
 
-                if(position1!=0 || (strcmp(s1->token[3], "dinero")==0)){
+                if (position1 != 0 || (strcmp(s1->token[3], "dinero") == 0)) {
+                    fprintf(stderr, "Depuración op_prioritaria: Prefijo inválido en s1.\n");
                     yyerror("no puede tener prefijo");
+                    free(miembro);
                     return NULL;
-                }else{
+                } else {
                     quantity1 = pasar_ud_base(quantity1, s1->token[1], s1->token[2]);
+                    fprintf(stderr, "Depuración op_prioritaria: quantity1 convertido a base %.2f.\n", quantity1);
                 }
+
                 miembro->token[1] = s1->token[1];
                 miembro->token[2] = s1->token[2];
                 miembro->token[3] = s1->token[3];
@@ -1975,52 +2025,73 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
                 break;
         }
 
-        switch(s2->contador) {
-            case 3:   
+        switch (s2->contador) {
+            case 3:
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s2->contador = 3.\n");
+
                 position2 = meassureLevel(medida, s2->token[2]);
-
-                if(position1!=0){
+                if (position2 != 0) {
                     quantity2 = quantity2 * medida[position2].conversion;
+                    fprintf(stderr, "Depuración op_prioritaria: quantity2 convertido a %.2f con position2 = %d.\n", quantity2, position2);
                 }
+                break;
 
-            case 5:  
+            case 5:
+                fprintf(stderr, "Depuración op_prioritaria: Procesando caso s2->contador = 5.\n");
+
                 position2 = meassureLevel(medida, s2->token[4]);
-
-                if(position2!=0 || (strcmp(s2->token[3], "dinero")==0)){
+                if (position2 != 0 || (strcmp(s2->token[3], "dinero") == 0)) {
+                    fprintf(stderr, "Depuración op_prioritaria: Prefijo inválido en s2.\n");
                     yyerror("no puede tener prefijo");
+                    free(miembro);
                     return NULL;
-                }else{
+                } else {
                     quantity2 = pasar_ud_base(quantity2, s2->token[1], s2->token[2]);
+                    fprintf(stderr, "Depuración op_prioritaria: quantity2 convertido a base %.2f.\n", quantity2);
                 }
-
-            break;
+                break;
         }
 
-        if(strcmp(signo,"+")==0)resultado = quantity1 + quantity2;
-        else if(strcmp(signo,"-")==0)resultado = quantity1 - quantity2;
-        else if(strcmp(signo,"*")==0) resultado = quantity1 * quantity2;
-        else if(strcmp(signo,"/")==0) resultado = quantity1 / quantity2;
-
-        if (5!=s1->contador){
-            if(position1!=0){
-            resultado = resultado * medida[position1].conversion;
-          }
-        }
+        if (strcmp(signo, "+") == 0) resultado = quantity1 + quantity2;
+        else if (strcmp(signo, "-") == 0) resultado = quantity1 - quantity2;
+        else if (strcmp(signo, "*") == 0) resultado = quantity1 * quantity2;
+        else if (strcmp(signo, "/") == 0) resultado = quantity1 / quantity2;
         else {
-            resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]); 
-          
+            fprintf(stderr, "Depuración op_prioritaria: Operador no reconocido.\n");
+            free(miembro);
+            return NULL;
         }
-    
+
+        fprintf(stderr, "Depuración op_prioritaria: Resultado de la operación %.2f.\n", resultado);
+        fprintf(stderr, "%d\n", position1);
+        fprintf(stderr, "%d\n", s1->contador);
+
+        if (s1->contador != 5) {
+            printf("Depuración op_prioritaria: d");
+            if (position1 != 0) {
+                resultado = resultado * medida[position1].conversion;
+                fprintf(stderr, "Depuración op_prioritaria: Resultado ajustado a %.2f con position1.\n", resultado);
+            }
+            printf("Depuración op_prioritaria: 1");
+        } else {
+            printf("Depuración op_prioritaria: q");
+            resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]);
+            fprintf(stderr, "Depuración op_prioritaria: Resultado convertido a unidad final %.2f.\n", resultado);
+        }
+        printf("Depuración op_prioritaria: 2");
         snprintf(miembro->token[0], sizeof(miembro->token[0]), "%.2f", resultado);
+        fprintf(stderr, "Depuración op_prioritaria: Resultado formateado en miembro->token[0] = \"%s\".\n", miembro->token[0]);
+
         return miembro;
     } else {
+        fprintf(stderr, "Depuración op_prioritaria: Las unidades de medida no son compatibles.\n");
         yyerror("Las unidades de medida deben ser iguales.");
-        free(miembro); 
+        free(miembro);
         return NULL;
     }
 
-     
 }
+
 
 char* token_string(struct tokens *s1) {
     
