@@ -1,1 +1,4 @@
 conversion 3 EUR -> USD
+conversion 5 EUR -> USD
+conversion 4 EUR -> USD
+calculo 3 litro + 2 mililitro

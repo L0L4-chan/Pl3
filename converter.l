@@ -37,17 +37,17 @@ hecto   "hecto"
 
 %%
 
-{ope1}                   { printf("TOKEN: ope1 -> %s\n", yytext);return OPE1; }
-{ope2}                   { printf("TOKEN: ope2 -> %s\n", yytext);return OPE2; }
-{float}                  { printf("TOKEN: floar -> %s\n", yytext);yylval.valFloat = atof(yytext); return REAL; }         
-"+"                      { printf("TOKEN: + -> %s\n", yytext);return PLUS; }
-"-"                      { printf("TOKEN: - -> %s\n", yytext);return MINUS; }
-"*"                      { printf("TOKEN: * -> %s\n", yytext);return MUL; }
-"/"                      { printf("TOKEN: / -> %s\n", yytext);return DIV; }
-"("                      { printf("TOKEN: parentesis1 -> %s\n", yytext);return LPAREN; }
-")"                      { printf("TOKEN: parentesis1 -> %s\n", yytext);return RPAREN; }
-"->"                     { printf("TOKEN: arrow -> %s\n", yytext); return ARROW; }
-{euro}                   { printf("TOKEN: euro -> %s\n", yytext);return EURO; }
+{ope1}                   { return OPE1; }
+{ope2}                   { return OPE2; }
+{float}                  { yylval.valFloat = atof(yytext); return REAL; }         
+"+"                      { return PLUS; }
+"-"                      { return MINUS; }
+"*"                      { return MUL; }
+"/"                      { return DIV; }
+"("                      { return LPAREN; }
+")"                      { return RPAREN; }
+"->"                     { return ARROW; }
+{euro}                   { return EURO; }
 {dollar}                 { return DOLLAR; }
 {gbp}                    { return GBP; }
 {yen}                    { return YEN; }
