@@ -31,10 +31,10 @@ void print_errors();
 struct tokens * dameTokens(char * s1);
 bool same_ud_conv(struct tokens * s1, char * s2);
 bool same_ud_oper(struct tokens * s1, struct tokens * s2);
-struct medidas * meassureType(const char* s1);
+struct medidas * meassureType( char* s1);
 int meassureLevel(struct medidas* levels, char* lev);
-float pasar_ud_base(float value, const char* op, const char* s2);
-float pasar_ud_final(float value, const char* op, const char* s2);
+float pasar_ud_base(float value,  char* op,  char* s2);
+float pasar_ud_final(float value,  char* op,  char* s2);
 char* prefijo (char * s1, char * s2);
 char * convertir(struct tokens * s1, char * s2);
 struct tokens * operacion_prioritaria(struct tokens *s1, struct tokens *s2, char *signo);
@@ -371,7 +371,7 @@ bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
     return true;
 }
 
-struct medidas* meassureType(const char* s1) {
+struct medidas* meassureType( char* s1) {
     if (s1 == NULL) {
         yyerror("No existe tipo de medida");
         return NULL;
@@ -405,7 +405,7 @@ int meassureLevel(struct medidas * levels, char* lev){
  }
 
 
-float pasar_ud_base(float value, const char* op, const char* s2) {
+float pasar_ud_base(float value,  char* op,  char* s2) {
     float result;
     if (strcmp(op, "/") == 0) {
         result = value / atof(s2);
@@ -415,7 +415,7 @@ float pasar_ud_base(float value, const char* op, const char* s2) {
     return result;
 }
 
-float pasar_ud_final(float value, const char* op, const char* s2) {
+float pasar_ud_final(float value,  char* op,  char* s2) {
     float result;
     if (strcmp(op, "/") == 0) {
         result = value * atof(s2);
@@ -463,7 +463,7 @@ char * convertir(struct tokens * s1, char * s2){
             quantity = atof(s1->token[0]); 
 
             if(position1!=0){
-                quantity = quantity * medida[position1].conversion;
+                quantity = quantity / medida[position1].conversion;
             }
             break;
 
@@ -533,7 +533,7 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
                 medida = meassureType(s1->token[1]);
                 position1 = meassureLevel(medida, s1->token[2]);
                 if (position1 != 0) {
-                    quantity1 = quantity1 * medida[position1].conversion;
+                    quantity1 = quantity1 / medida[position1].conversion;
                 }
 
                 miembro->token[1] = s1->token[1];
@@ -563,7 +563,7 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
             case 3:
                 position2 = meassureLevel(medida, s2->token[2]);
                 if (position2 != 0) {
-                    quantity2 = quantity2 * medida[position2].conversion;
+                    quantity2 = quantity2 / medida[position2].conversion;
                 }
                 break;
             case 5:
