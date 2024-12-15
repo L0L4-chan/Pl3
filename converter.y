@@ -164,12 +164,12 @@ cuenta:
     cuenta PLUS termino{
         if (same_ud_oper($1, $3)){
             $$ = operacion_prioritaria($1, $3, "+");
-            }
+            }else{$$=NULL;}
     }
     |cuenta MINUS termino{
         if (same_ud_oper($1, $3)){
             $$ = operacion_prioritaria($1, $3, "-");
-            }
+            }else{$$=NULL;}
     }
     | termino                              {$1;}
 ;
@@ -178,12 +178,12 @@ termino:
     termino MUL factor { 
         if (same_ud_oper($1, $3)){
             $$ = operacion_prioritaria($1, $3, "*");
-            }
+            }else{$$=NULL;}
     }
     |termino DIV factor{
-        if (same_ud_oper($1, $3)){
+            if (same_ud_oper($1, $3)){
             $$ = operacion_prioritaria($1, $3, "/");
-            }
+            } else{$$=NULL;}
         }
     |factor                 {$1;}
 ;
@@ -336,6 +336,7 @@ bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
     
 
      if (s1 == NULL || s2 == NULL) {
+        fprintf(stderr, "Depuración:same_ud_oper da null");
         yyerror("Faltan argumentos");
         return false;
     }
@@ -609,6 +610,10 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
 }
 
 char* token_string(struct tokens *s1) {
+    if(s1==NULL) {
+        fprintf(stderr, "Depuración: token to string :\n");
+        return NULL;
+    }
     
     char *result = malloc(200 * sizeof(char));
    if (s1->contador == 3) {
