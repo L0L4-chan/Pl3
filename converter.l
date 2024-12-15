@@ -71,7 +71,7 @@ hecto   "hecto"
 {hecto}                  { return HECTO; }
 
 [ \t\r\n]+               {  }
-.                        { showError(yytext); }
+.                        {showError(yytext);}
 
 
 %%

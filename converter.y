@@ -71,7 +71,7 @@ struct medidas capacidad[4] = {
 %}
 
 %token <valFloat> REAL
-%token <valString> OPE1 OPE2 PLUS MINUS MUL DIV DELIM LPAREN RPAREN ARROW MEAN MODE MEDIAN 
+%token <valString> OPE1 OPE2 PLUS MINUS MUL DIV LPAREN RPAREN ARROW 
 %token <valString> GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
 %token <valString> MILI DECI CENTI DECA HECTO KILO 
 %type <valString>  conversion unidad ud prefijo operacion 
@@ -105,12 +105,16 @@ input:  OPE1 conversion {
 
 conversion:
     miembro ARROW unidad {
-        if (same_ud_conv($1, $3)){$$ = convertir($1, $3);}
+        if (same_ud_conv($1, $3)){
+            $$ = convertir($1, $3);
+        }else{
+            $$ = NULL;
+        }
     }
 ;
 
 miembro:
-         REAL unidad {
+        REAL unidad {
         char aux[100];
         snprintf(aux, sizeof(aux), "%f %s", $1, $2); 
         $$ = dameTokens(aux);
@@ -220,7 +224,7 @@ void yyerror(const char *s) {
     int aux = error_count;
     if (error_count < 100) {         
         for (int i = 0; i < error_count; i++) {
-            if (errores[i].line == yylineno) {
+            if (errores[i].line == (yylineno-1)) {
             free(errores[i].type); // Liberar memoria previa
             errores[i].type = strdup(s);
             aux = i;
@@ -228,7 +232,7 @@ void yyerror(const char *s) {
             }
         }
         errores[aux].type = strdup(s);
-        errores[aux].line = yylineno;
+        errores[aux].line = (yylineno-1);
         if (aux == error_count)error_count++;
     }
 }
@@ -249,11 +253,11 @@ struct tokens * dameTokens(char * s1) {
     if (s1 == NULL) {
         return NULL;
     }
-
     struct tokens * result = (struct tokens *)malloc(sizeof(struct tokens));
     if (result == NULL) {
         return NULL;
     }
+
     result->contador = 0;
     for (int i = 0; i < 5; i++) {
         result->token[i] = NULL;
@@ -280,8 +284,6 @@ struct tokens * dameTokens(char * s1) {
         token = strtok(NULL, " ");
     }
 
-    if (result->contador == 5 && token != NULL) {
-    }
     free(s1copy);
     return result;
 }
@@ -315,7 +317,6 @@ bool same_ud_conv(struct tokens * s1, char * s2) {
 
 
     if (strcmp(compare1, compare2) != 0) {
-        fprintf(stderr, "Depuración: same_ud_conv_");
         char error_msg[100];
         snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
         yyerror(error_msg);
@@ -331,8 +332,9 @@ void liberarTokens(struct tokens *tokens) {
     }
     tokens->contador = 0;
 }
-
 bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
+    
+
      if (s1 == NULL || s2 == NULL) {
         yyerror("Faltan argumentos");
         return false;
@@ -359,7 +361,6 @@ bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
     }
 
     if (strcmp(compare1, compare2) != 0) {
-        fprintf(stderr, "Depuración: same_ud_conv_");
         char error_msg[100];
         snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
         yyerror(error_msg);
@@ -443,7 +444,6 @@ char* prefijo (char * s1, char * s2){
     return NULL;
 }
 
-
 char * convertir(struct tokens * s1, char * s2){
    
     struct tokens * unidad = dameTokens(s2);
@@ -525,7 +525,6 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
     float resultado;
     struct medidas *medida;
 
-    
     if (same_ud_oper(s1, s2)) {
 
         switch (s1->contador) {
@@ -559,7 +558,6 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
                 miembro->contador = 5;
                 break;
         }
-
         switch (s2->contador) {
             case 3:
                 position2 = meassureLevel(medida, s2->token[2]);
@@ -592,6 +590,8 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
             return NULL;
         }
 
+        
+
         if(s1->contador== 3 ) {
             if (position1 != 0) {
                 resultado = resultado * medida[position1].conversion;
@@ -599,7 +599,7 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
         } else {
             resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]);
         }
-        snprintf(miembro->token[0], 50, "%.4f", resultado);
+        snprintf(miembro->token[0], 50, "%.4f", resultado);  
         return miembro;
     } else {
         yyerror("Las unidades de medida deben ser iguales.");

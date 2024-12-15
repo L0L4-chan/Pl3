@@ -7,7 +7,7 @@ calculo 3 litro + 5 gramo
 calculo 3 kilolitro + 5 decalitro
 calculo 3 litro + 5 mililitro
 calculo 3 mililitro + 5 litro
-calculo 3 litro + 5 gallon
+calculo 3 litro + 5 galon
 calculo 3 barril + 5 litro
 calculo 3 gramo + 5 kilogramo
 calculo 3 piedra + 5 kilogramo
