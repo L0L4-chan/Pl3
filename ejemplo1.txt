@@ -22,4 +22,4 @@ conversion 3 EUR -> JPY
 conversion 3 onza -> yarda
 conversion 3 kilometro -> metro
 conversion 3 hectolitro -> mililitro
-calculo (3 yarda + 5 yarda) / 4 yarda
+calculo 3 yarda / (4 yarda + 5 yarda) 

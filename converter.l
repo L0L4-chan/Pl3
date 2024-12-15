@@ -10,7 +10,7 @@ void showError(char* arg);
 
 ope1    "conversion"
 ope2    "calculo"
-float   -?[0-9]+(\.[0-9]+)?
+float   [0-9]+(\.[0-9]+)?
 arrow   "->"
 euro    "EUR"
 dollar  "USD"

@@ -21,10 +21,88 @@ Conversiones
 
 Maneja las siguientes escalas:
 
+De distancia:
+- metro 
+- yarda
+- pie 
+- milla 
 
+De divisa
+- euro
+- dolar
+- gbp
+- yen
+
+De peso
+- gramo
+- libra
+- onza
+- piedra
+
+De capacidad
+- litro
+- pinta
+- galon
+- barril
 
 Operaciones aritmeticas simples 
 
+- Suma
+- Resta
+- Multiplicaciones
+- Divisiones
 
+Se analizara y ejecutara todo el archivo y se mostrara los resultados por pantalla y al final del archivo se mostraran los errores encontrados.
+
+Si se comente un error lexico, ell error aparecera cuando se haya encontrado y podra influir en los resultados que se calculen a partir de la linea donde ocurra.
+
+si se comente un error sintactico o de otro tipo, (por ejemplo intentar convertir unidades de peso en unidades de divisa) el error se indicara al finalizar la ejecución.
 
 ## Lenguaje
+
+Para poder utilizar la herramienta conversora se debera usar la siguiente sintaxsis:
+
+conversion X  udOrigen -> udDestino
+ej:
+'''
+conversion 3 EUR -> JPY 
+'''
+Para las unidades utilizaremos los siguientes lexemas:
+- metro -> metro
+- yarda -> yarda
+- pie -> pie
+- milla  -> milla
+- euro -> EUR
+- dolar -> USD
+- gbp  -> GBP
+- yen  -> JPY
+- gramo -> gramo
+- libra -> libra
+- onza -> onza
+- piedra -> piedra
+- litro  -> litro
+- pinta -> pinta
+- galon -> galon
+- barril  -> barril
+
+Las medidas de litro, metro y gramo podran ir acompañadas de prefijos:
+
+- mili    
+- deci   
+- deca   
+- centi  
+- kilo   
+- hecto   
+
+
+Para el uso de operaciones aritmeticas entre unidades de medidas usaremos la siguiente sintaxis:
+
+ calculo X und1 ope Y und2
+ calculo 3 miligramo + 5 onza
+
+- Suma +
+- Resta -
+- Multiplicaciones *
+- Divisiones /
+
+El resultado se mostrara en la unidad inicial.
