@@ -158,20 +158,28 @@ operacion:
 
 cuenta: 
     cuenta PLUS termino{
-        $$ = operacion_prioritaria($1,$3, "+");
+        if (same_ud_oper($1, $3)){
+            $$ = operacion_prioritaria($1, $3, "+");
+            }
     }
     |cuenta MINUS termino{
-        $$ = operacion_prioritaria($1, $3, "-");
+        if (same_ud_oper($1, $3)){
+            $$ = operacion_prioritaria($1, $3, "-");
+            }
     }
     | termino                              {$1;}
 ;
 
 termino: 
-    termino MUL factor {
-        $$ = operacion_prioritaria($1, $3, "*");
+    termino MUL factor { 
+        if (same_ud_oper($1, $3)){
+            $$ = operacion_prioritaria($1, $3, "*");
+            }
     }
     |termino DIV factor{
-        $$ = operacion_prioritaria($1, $3, "/");
+        if (same_ud_oper($1, $3)){
+            $$ = operacion_prioritaria($1, $3, "/");
+            }
         }
     |factor                 {$1;}
 ;
@@ -307,6 +315,7 @@ bool same_ud_conv(struct tokens * s1, char * s2) {
 
 
     if (strcmp(compare1, compare2) != 0) {
+        fprintf(stderr, "Depuración: same_ud_conv_");
         char error_msg[100];
         snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
         yyerror(error_msg);
@@ -350,6 +359,7 @@ bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
     }
 
     if (strcmp(compare1, compare2) != 0) {
+        fprintf(stderr, "Depuración: same_ud_conv_");
         char error_msg[100];
         snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
         yyerror(error_msg);

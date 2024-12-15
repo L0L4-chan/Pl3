@@ -71,7 +71,7 @@ hecto   "hecto"
 {hecto}                  { return HECTO; }
 
 [ \t\r\n]+               {  }
-.                        { printf("LEXICAL ERROR: '%s' at line %d\n", yytext, yylineno); }
+.                        { showError(yytext); }
 
 
 %%
