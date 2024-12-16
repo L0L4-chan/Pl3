@@ -14,7 +14,7 @@ struct medidas{
     float conversion;
 };
 
-struct tokens {
+struct informacion_operando{
     char* token[5];
     int contador;
 };
@@ -28,18 +28,18 @@ void yyerror(const char *s);
 void print_errors();
 
 
-struct tokens * dameTokens(char * s1);
-bool same_ud_conv(struct tokens * s1, char * s2);
-bool same_ud_oper(struct tokens * s1, struct tokens * s2);
+struct informacion_operando* dameTokens(char * s1);
+bool same_ud_conv(struct informacion_operando* s1, char * s2);
+bool same_ud_oper(struct informacion_operando* s1, struct informacion_operando* s2);
 struct medidas * meassureType( char* s1);
 int meassureLevel(struct medidas* levels, char* lev);
 float pasar_ud_base(float value,  char* op,  char* s2);
 float pasar_ud_final(float value,  char* op,  char* s2);
 char* prefijo (char * s1, char * s2);
-char * convertir(struct tokens * s1, char * s2);
-struct tokens * operacion_prioritaria(struct tokens *s1, struct tokens *s2, char *signo);
-char * token_string(struct tokens *s1);
-void liberarTokens(struct tokens *tokens);
+char * convertir(struct informacion_operando* s1, char * s2);
+struct informacion_operando* operacion_prioritaria(struct informacion_operando*s1, struct informacion_operando*s2, char *signo);
+char * token_string(struct informacion_operando*s1);
+void liberarTokens(struct informacion_operando*tokens);
 
 struct medidas distancia[4] = {
     {"metro", 1},
@@ -79,7 +79,7 @@ struct medidas capacidad[4] = {
 
 %union {
     char * valString;
-    struct tokens * valToken;
+    struct informacion_operando* valToken;
     int valInt;
     float valFloat;
 };
@@ -253,50 +253,50 @@ void print_errors() {
     error_count = 0;
 }
 
-struct tokens * dameTokens(char * s1) {
+struct informacion_operando* dameTokens(char * s1) {
     if (s1 == NULL) {
         return NULL;
     }
-    struct tokens * result = (struct tokens *)malloc(sizeof(struct tokens));
-    if (result == NULL) {
+    struct informacion_operando* resultado = (struct informacion_operando*)malloc(sizeof(struct tokens));
+    if (resultado == NULL) {
         return NULL;
     }
 
-    result->contador = 0;
+    resultado->contador = 0;
     for (int i = 0; i < 5; i++) {
-        result->token[i] = NULL;
+        resultado->token[i] = NULL;
     }
     char * s1copy = strdup(s1);
     if (s1copy == NULL) {
-        free(result);
+        free(resultado);
         return NULL;
     }
     char * token = strtok(s1copy, " ");
-    while (token != NULL && result->contador < 5) {
-        result->token[result->contador] = strdup(token);
-        if (result->token[result->contador] == NULL) {
+    while (token != NULL && resultado->contador < 5) {
+        resultado->token[resultado->contador] = strdup(token);
+        if (resultado->token[resultado->contador] == NULL) {
             // Liberar memoria asignada antes de salir
-            for (int i = 0; i < result->contador; i++) {
-                free(result->token[i]);
+            for (int i = 0; i < resultado->contador; i++) {
+                free(resultado->token[i]);
             }
-            free(result);
+            free(resultado);
             free(s1copy);
             return NULL;
         }
-        result->contador++;
+        resultado->contador++;
         token = strtok(NULL, " ");
     }
 
     free(s1copy);
-    return result;
+    return resultado;
 }
 
-bool same_ud_conv(struct tokens * s1, char * s2) {
+bool same_ud_conv(struct informacion_operando* s1, char * s2) {
     if(s1 == NULL || s2 == NULL || strcmp(s2, "")==0) {
         yyerror("Falta elemnto");
         return false;
     }
-    struct tokens * unidad = dameTokens(s2);
+    struct informacion_operando* unidad = dameTokens(s2);
     char * compare1;
     char * compare2;
 
@@ -329,13 +329,13 @@ bool same_ud_conv(struct tokens * s1, char * s2) {
     return true;
 }
 
-void liberarTokens(struct tokens *tokens) {
+void liberarTokens(struct informacion_operando*tokens) {
     for (int i = 0; i < tokens->contador; i++) {
         free(tokens->token[i]);
     }
     tokens->contador = 0;
 }
-bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
+bool same_ud_oper(struct informacion_operando* s1, struct informacion_operando* s2) {
     
      if (s1 == NULL) {
         yyerror("Faltan argumentos");
@@ -411,23 +411,23 @@ int meassureLevel(struct medidas * levels, char* lev){
 
 
 float pasar_ud_base(float value,  char* op,  char* s2) {
-    float result;
+    float resultado;
     if (strcmp(op, "/") == 0) {
-        result = value / atof(s2);
+        resultado = value / atof(s2);
     } else if (strcmp(op, "*") == 0) {
-        result = value * atof(s2);
+        resultado = value * atof(s2);
     }
-    return result;
+    return resultado;
 }
 
 float pasar_ud_final(float value,  char* op,  char* s2) {
-    float result;
+    float resultado;
     if (strcmp(op, "/") == 0) {
-        result = value * atof(s2);
+        resultado = value * atof(s2);
     } else if (strcmp(op, "*") == 0) {
-        result = value / atof(s2);
+        resultado = value / atof(s2);
     }
-    return result;
+    return resultado;
 }
 
 char* prefijo (char * s1, char * s2){
@@ -450,9 +450,9 @@ char* prefijo (char * s1, char * s2){
     return NULL;
 }
 
-char * convertir(struct tokens * s1, char * s2){
+char * convertir(struct informacion_operando* s1, char * s2){
    
-    struct tokens * unidad = dameTokens(s2);
+    struct informacion_operando* unidad = dameTokens(s2);
     int position1;
     int position2;
 
@@ -512,7 +512,7 @@ char * convertir(struct tokens * s1, char * s2){
     return resultado;
 }
 
-struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, char * signo) {
+struct informacion_operando* operacion_prioritaria(struct informacion_operando* s1, struct informacion_operando* s2, char * signo) {
 
     struct tokens* miembro = malloc(sizeof(struct tokens));
     if (miembro == NULL) {
@@ -614,20 +614,20 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
     }
 }
 
-char* token_string(struct tokens *s1) {
+char* token_string(struct informacion_operando*s1) {
     if(s1==NULL) {
         return NULL;
     }
     
-    char *result = malloc(200 * sizeof(char));
+    char *resultado = malloc(200 * sizeof(char));
    if (s1->contador == 3) {
-        snprintf(result, 200, "%s %s", s1->token[0], s1->token[2]);
+        snprintf(resultado, 200, "%s %s", s1->token[0], s1->token[2]);
     } else if (s1->contador == 5) {
         char* prefix = prefijo(s1->token[1], s1->token[2]);
         if (prefix == NULL) {  
             return NULL; 
         }
-        snprintf(result, 200, "%s %s%s", s1->token[0], prefix, s1->token[4]);
+        snprintf(resultado, 200, "%s %s%s", s1->token[0], prefix, s1->token[4]);
     }
-    return result;  
+    return resultado;  
 }
