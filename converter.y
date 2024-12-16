@@ -88,8 +88,12 @@ struct medidas capacidad[4] = {
 
 %%
 
-s: input
-| s input
+s: start
+;
+
+start: 
+    input
+| start input
 ;
 
 input:  OPE1 conversion {
@@ -171,7 +175,7 @@ cuenta:
             $$ = operacion_prioritaria($1, $3, "-");
             }else{$$=NULL;}
     }
-    | termino                              {$1;}
+    | termino                              {$$ = $1;}
 ;
 
 termino: 
@@ -185,12 +189,12 @@ termino:
             $$ = operacion_prioritaria($1, $3, "/");
             } else{$$=NULL;}
         }
-    |factor                 {$1;}
+    |factor                 {$$ = $1;}
 ;
 
 factor: 
-    LPAREN cuenta RPAREN    {$2;}   
-    |miembro                {$1;}
+    LPAREN cuenta RPAREN    {$$ =$2;}   
+    |miembro                {$$ =$1;}
 ;
 
 
@@ -271,7 +275,6 @@ struct tokens * dameTokens(char * s1) {
     while (token != NULL && result->contador < 5) {
         result->token[result->contador] = strdup(token);
         if (result->token[result->contador] == NULL) {
-            fprintf(stderr, "Error: No se pudo duplicar el token.\n");
             // Liberar memoria asignada antes de salir
             for (int i = 0; i < result->contador; i++) {
                 free(result->token[i]);
@@ -334,9 +337,11 @@ void liberarTokens(struct tokens *tokens) {
 }
 bool same_ud_oper(struct tokens * s1, struct tokens * s2) {
     
-
-     if (s1 == NULL || s2 == NULL) {
-        fprintf(stderr, "Depuración:same_ud_oper da null");
+     if (s1 == NULL) {
+        yyerror("Faltan argumentos");
+        return false;
+    }
+    if (s2 == NULL) {
         yyerror("Faltan argumentos");
         return false;
     }
@@ -611,7 +616,6 @@ struct tokens * operacion_prioritaria(struct tokens * s1, struct tokens * s2, ch
 
 char* token_string(struct tokens *s1) {
     if(s1==NULL) {
-        fprintf(stderr, "Depuración: token to string :\n");
         return NULL;
     }
     

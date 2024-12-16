@@ -10,6 +10,7 @@ compile:
 	gcc -o $(FUENTE) lex.yy.c $(FUENTE).tab.c -$(LIB) 
 
 run:
+
 	valgrind --leak-check=full --track-origins=yes ./$(FUENTE) < $(PRUEBA) 
 
 run2:
