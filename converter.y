@@ -31,6 +31,7 @@ void print_errors();
 struct informacion_operando* dameTokens(char * s1);
 bool same_ud_conv(struct informacion_operando* s1, char * s2);
 bool same_ud_oper(struct informacion_operando* s1, struct informacion_operando* s2);
+bool comparar_unidades(char *s1, char *s2);
 struct medidas * meassureType( char* s1);
 int meassureLevel(struct medidas* levels, char* lev);
 float pasar_ud_base(float value,  char* op,  char* s2);
@@ -39,7 +40,7 @@ char* prefijo (char * s1, char * s2);
 char * convertir(struct informacion_operando* s1, char * s2);
 struct informacion_operando* operacion_prioritaria(struct informacion_operando*s1, struct informacion_operando*s2, char *signo);
 char * token_string(struct informacion_operando*s1);
-void liberarTokens(struct informacion_operando*tokens);
+void liberarTokens(struct informacion_operando* tokens);
 
 struct medidas distancia[4] = {
     {"metro", 1},
@@ -106,7 +107,6 @@ input:  OPE1 conversion {
     }
 ;
 
-
 conversion:
     miembro ARROW unidad {
         if (same_ud_conv($1, $3)){
@@ -122,7 +122,8 @@ miembro:
         char aux[100];
         snprintf(aux, sizeof(aux), "%f %s", $1, $2); 
         $$ = dameTokens(aux);
-    };
+    }
+;
 
 unidad:
     ud               { $$ = $1; }
@@ -130,7 +131,6 @@ unidad:
                     snprintf(aux, sizeof(aux), "%s%s", $1, $2);
                     $$ = strdup(aux);}
 ;
-
 
 ud: 
     YEN             { $$ = "dinero yen ";}
@@ -149,7 +149,7 @@ ud:
     | YARDA         { $$ = "distancia yarda ";}
     | PIE           { $$ = "distancia pie ";}
     | MILE          { $$ = "distancia milla ";}
-
+;
 
 prefijo:
     MILI            { $$ = "/ 1000 ";}
@@ -158,7 +158,7 @@ prefijo:
     |DECA           { $$ = "* 10 ";}
     |HECTO          { $$ = "* 100 ";}
     |KILO           { $$ = "* 1000 ";}
-
+;
 
 operacion: 
      cuenta           {$$ = token_string($1);}      
@@ -193,8 +193,8 @@ termino:
 ;
 
 factor: 
-    LPAREN cuenta RPAREN    {$$ =$2;}   
-    |miembro                {$$ =$1;}
+    LPAREN cuenta RPAREN    {$$ = $2;}   
+    |miembro                {$$ = $1;}
 ;
 
 
@@ -257,7 +257,7 @@ struct informacion_operando* dameTokens(char * s1) {
     if (s1 == NULL) {
         return NULL;
     }
-    struct informacion_operando* resultado = (struct informacion_operando*)malloc(sizeof(struct tokens));
+    struct informacion_operando* resultado = (struct informacion_operando*)malloc(sizeof(struct informacion_operando));
     if (resultado == NULL) {
         return NULL;
     }
@@ -318,15 +318,9 @@ bool same_ud_conv(struct informacion_operando* s1, char * s2) {
         return false;
     }
 
-
-    if (strcmp(compare1, compare2) != 0) {
-        char error_msg[100];
-        snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
-        yyerror(error_msg);
-        return false;
-    }
     liberarTokens(unidad);
-    return true;
+    
+    return comparar_unidades(compare1, compare2);
 }
 
 void liberarTokens(struct informacion_operando*tokens) {
@@ -335,6 +329,18 @@ void liberarTokens(struct informacion_operando*tokens) {
     }
     tokens->contador = 0;
 }
+
+bool comparar_unidades(char *compare1, char * compare2) {
+
+      if (strcmp(compare1, compare2) != 0) {
+        char error_msg[100];
+        snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
+        yyerror(error_msg);
+        return false;
+    }
+    return true;
+    }
+
 bool same_ud_oper(struct informacion_operando* s1, struct informacion_operando* s2) {
     
      if (s1 == NULL) {
@@ -366,14 +372,7 @@ bool same_ud_oper(struct informacion_operando* s1, struct informacion_operando* 
         return false;
     }
 
-    if (strcmp(compare1, compare2) != 0) {
-        char error_msg[100];
-        snprintf(error_msg, sizeof(error_msg), "Las unidades '%s' y '%s' no son del mismo tipo", compare1, compare2);
-        yyerror(error_msg);
-        return false;
-    }
-
-    return true;
+    return comparar_unidades(compare1, compare2);
 }
 
 struct medidas* meassureType( char* s1) {
@@ -514,7 +513,7 @@ char * convertir(struct informacion_operando* s1, char * s2){
 
 struct informacion_operando* operacion_prioritaria(struct informacion_operando* s1, struct informacion_operando* s2, char * signo) {
 
-    struct tokens* miembro = malloc(sizeof(struct tokens));
+    struct informacion_operando* miembro = malloc(sizeof(struct informacion_operando));
     if (miembro == NULL) {
         return NULL;
     }
