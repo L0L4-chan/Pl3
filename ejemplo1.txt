@@ -70,3 +70,42 @@ conversion 3 onza -> yarda
 conversion 3 kilometro -> metro
 conversion 3 hectolitro -> mililitro
 calculo 3 yarda / (4 yarda + 5 yarda) 
+
+conversion 7.5 EUR -> USD
+conversion 12.3 GBP -> EUR
+conversion 100.75 JPY -> USD
+conversion 50 USD -> JPY
+conversion 25.5 EUR -> GBP
+conversion 3.2 metro -> yarda
+conversion 15.75 pie -> milla
+conversion 0.005 milla -> metro
+conversion 10.5 yarda -> pie
+conversion 2.75 metro -> pie
+conversion 3.6 litro -> mililitro
+conversion 12.5 barril -> galon
+conversion 0.75 galon -> litro
+conversion 7.85 hectolitro -> mililitro
+conversion 50 pinta -> litro
+conversion 5.5 gramo -> libra
+conversion 100.75 onza -> kilogramo
+conversion 2.5 piedra -> gramo
+conversion 3.2 libra -> onza
+calculo 3.25 litro + 2.75 mililitro
+calculo 7.5 galon - 1.25 litro
+calculo 3.5 hectolitro / 5 litro
+calculo 2 barril * 3.75 galon
+calculo 3.6 litro + 5 EUR 
+calculo 3.75 piedra + 5.5 kilogramo
+calculo 2.3 libra - 0.75 gramo
+calculo 7.5 onza / 3.2 kilogramo
+calculo 3.5 gramo + 4 EUR 
+calculo 3.5 metro + 2.75 yarda
+calculo 2.25 milla - 0.5 kilometro
+calculo 7.5 pie * 3.5 pie
+calculo 3.25 metro / 1.75 pie
+calculo 3 pie / (4.5 yarda + 5.25 yarda)
+calculo 3.5 EUR + 5 USD
+calculo 7.25 GBP - 2 JPY
+calculo 10.5 USD * 3.75 EUR
+calculo 50 JPY / 2.5 EUR
+calculo 7 EUR / (3 GBP + 5 USD) 

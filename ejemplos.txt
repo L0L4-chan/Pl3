@@ -29,9 +29,6 @@ conversion 5 milla -> metro
 conversion 5 milla -> yarda
 conversion 5 milla -> pie
 conversion 5 milla -> milla
-
-
-
 calculo 3 litro + 2 mililitro
 calculo 3 litro + 5 litro
 calculo 3 litro + 5 gramo
