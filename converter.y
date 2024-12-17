@@ -99,12 +99,12 @@ start:
 
 input:  OPE1 conversion {
     if ($2 !=NULL)
-        printf("El resultado de la conversión es: %s\n",$2);
+        printf("El resultado de la conversión en linea %d es: %s\n",(yylineno),$2);
         free($2);
     }
     | OPE2 operacion {
         if ($2 !=NULL)
-            printf("El resultado de la operación es: %s\n",$2);
+            printf("El resultado de la operación en linea %d es: %s\n",(yylineno),$2);
             free($2);
     
     }
