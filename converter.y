@@ -58,7 +58,7 @@ struct medidas monedas[4] = {
 
 struct medidas peso[4] = {
     {"gramo", 1},
-    {"pound", 0.0022},
+    {"libra", 0.0022},
     {"onza", 0.035},
     {"piedra", 0.00016}
 };
