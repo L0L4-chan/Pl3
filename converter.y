@@ -100,10 +100,13 @@ start:
 input:  OPE1 conversion {
     if ($2 !=NULL)
         printf("El resultado de la conversión es: %s\n",$2);
+        free($2);
     }
     | OPE2 operacion {
         if ($2 !=NULL)
             printf("El resultado de la operación es: %s\n",$2);
+            free($2);
+    
     }
 ;
 
@@ -127,9 +130,11 @@ miembro:
 
 unidad:
     ud               { $$ = $1; }
-    | prefijo ud    {char aux[100];
-                    snprintf(aux, sizeof(aux), "%s%s", $1, $2);
-                    $$ = strdup(aux);}
+    | prefijo ud    {
+        char aux[100];
+        snprintf(aux, sizeof(aux), "%s%s", $1, $2);
+        $$ = strdup(aux);
+        }
 ;
 
 ud: 
@@ -274,15 +279,6 @@ struct informacion_operando* dameTokens(char * s1) {
     char * token = strtok(s1copy, " ");
     while (token != NULL && resultado->contador < 5) {
         resultado->token[resultado->contador] = strdup(token);
-        if (resultado->token[resultado->contador] == NULL) {
-            // Liberar memoria asignada antes de salir
-            for (int i = 0; i < resultado->contador; i++) {
-                free(resultado->token[i]);
-            }
-            free(resultado);
-            free(s1copy);
-            return NULL;
-        }
         resultado->contador++;
         token = strtok(NULL, " ");
     }
@@ -328,6 +324,7 @@ void liberarTokens(struct informacion_operando*tokens) {
         free(tokens->token[i]);
     }
     tokens->contador = 0;
+    free(tokens);
 }
 
 bool comparar_unidades(char *compare1, char * compare2) {
@@ -479,7 +476,12 @@ char * convertir(struct informacion_operando* s1, char * s2){
 
             if(position1!=0 || (strcmp(s1->token[3], "dinero")==0)){
                 yyerror("no puede tener prefijo");
-                return "";
+                liberarTokens(s1);
+                liberarTokens(unidad);
+                free(s2);
+                free(resultado);
+                free(medida);
+                return NULL;
             }else{
                 
                 quantity = pasar_ud_base(quantity, s1->token[1], s1->token[2]);
@@ -501,13 +503,22 @@ char * convertir(struct informacion_operando* s1, char * s2){
             position2 = meassureLevel(medida, unidad->token[3]);
             if(position2!=0){
                 yyerror("no puede tener prefijo");
-                return "";
+                liberarTokens(s1);
+                liberarTokens(unidad);
+                free(s2);
+                free(resultado);
+                free(medida);
+                return NULL;
             }else{   
                 quantity = pasar_ud_final(quantity, unidad->token[0], unidad->token[1]);  
                 snprintf(resultado, 100, "%.4f %s%s", quantity, prefijo(unidad->token[0], unidad->token[1]), unidad->token[3]);
           } 
             break;    
     }
+    liberarTokens(s1);
+    liberarTokens(unidad);
+    free(s2);
+    free(medida);
     return resultado;
 }
 
@@ -515,11 +526,14 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
 
     struct informacion_operando* miembro = malloc(sizeof(struct informacion_operando));
     if (miembro == NULL) {
+        liberarTokens(s1);
+        liberarTokens(s2);
+        liberarTokens(miembro);;
         return NULL;
     }
     miembro->token[0] = malloc(50 * sizeof(char));  
     if (miembro->token[0] == NULL) {
-        free(miembro);
+        liberarTokens(miembro);;
         return NULL;
     }
 
@@ -551,7 +565,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
 
                 if (position1 != 0 || (strcmp(s1->token[3], "dinero") == 0)) {
                     yyerror("no puede tener prefijo");
-                    free(miembro);
+                    liberarTokens(s1);
+                    liberarTokens(s2);
+                    liberarTokens(miembro);;
                     return NULL;
                 } else {
                     quantity1 = pasar_ud_base(quantity1, s1->token[1], s1->token[2]);
@@ -563,6 +579,7 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                 miembro->contador = 5;
                 break;
         }
+
         switch (s2->contador) {
             case 3:
                 position2 = meassureLevel(medida, s2->token[2]);
@@ -574,7 +591,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                 position2 = meassureLevel(medida, s2->token[4]);
                 if (position2 != 0 || (strcmp(s2->token[3], "dinero") == 0)) {
                     yyerror("no puede tener prefijo");
-                    free(miembro);
+                    liberarTokens(s1);
+                    liberarTokens(s2);
+                    liberarTokens(miembro);;
                     return NULL;
                 } else {
                     quantity2 = pasar_ud_base(quantity2, s2->token[1], s2->token[2]);
@@ -591,7 +610,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
         }else if (strcmp(signo, "/") == 0) {
             resultado = quantity1 / quantity2;
         }else {
-            free(miembro);
+            liberarTokens(s1);
+            liberarTokens(s2);
+            liberarTokens(miembro);;
             return NULL;
         }
 
@@ -604,11 +625,15 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
         } else {
             resultado = pasar_ud_final(resultado, s1->token[1], s1->token[2]);
         }
-        snprintf(miembro->token[0], 50, "%.4f", resultado);  
+        snprintf(miembro->token[0], 50, "%.4f", resultado);
+        liberarTokens(s1);
+        liberarTokens(s2);
         return miembro;
     } else {
         yyerror("Las unidades de medida deben ser iguales.");
-        free(miembro);
+        liberarTokens(s1);
+        liberarTokens(s2);
+        liberarTokens(miembro);;
         return NULL;
     }
 }
@@ -628,5 +653,7 @@ char* token_string(struct informacion_operando*s1) {
         }
         snprintf(resultado, 200, "%s %s%s", s1->token[0], prefix, s1->token[4]);
     }
+
+    liberarTokens(s1);
     return resultado;  
 }
