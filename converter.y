@@ -534,7 +534,7 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                 medida = meassureType(s1->elemento[1]);
                 position1 = meassureLevel(medida, s1->elemento[2]);
                 if (position1 != 0) { 
-                    quantity1 = quantity1 *  medida[position1].conversion;
+                    quantity1 = quantity1 / medida[position1].conversion;
                     fprintf(stderr, "Depuración: und 1 %.4f en base:\n", quantity1);
                 }
 
@@ -568,7 +568,7 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                 position2 = meassureLevel(medida, s2->elemento[2]);
                 if (position2 != 0) {
                     
-                    quantity2 = quantity2 * medida[position2].conversion;
+                    quantity2 = quantity2 / medida[position2].conversion;
                     fprintf(stderr, "Depuración: und 2 %.4f en base:\n", quantity2);
                 }
                 break;
