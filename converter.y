@@ -282,14 +282,13 @@ struct informacion_operando* dameTokens(char * s1) {
         resultado->contador++;
         buffer = strtok(NULL, " ");
     }
-    free(buffer);
     free(s1copy);
     return resultado;
 }
 
 bool same_ud_conv(struct informacion_operando* s1, char * s2) {
-    if(s1 == NULL || s2 == NULL || strcmp(s2, "")==0) {
-        yyerror("Falta elemnto");
+    if(s1 == NULL || s2 == NULL ) {
+        yyerror("Falta elemento");
         return false;
     }
     struct informacion_operando* unidad = dameTokens(s2);
@@ -310,12 +309,8 @@ bool same_ud_conv(struct informacion_operando* s1, char * s2) {
         compare2 = unidad->elemento[0]; 
     } else {
         yyerror("Error: Formato no válido para las cadenas.\n");
-        liberarTokens(unidad); // Liberar memoria
         return false;
-    }
-
-    liberarTokens(unidad);
-    
+    }    
     return comparar_unidades(compare1, compare2);
 }
 
@@ -336,7 +331,7 @@ bool comparar_unidades(char *compare1, char * compare2) {
         return false;
     }
     return true;
-    }
+}
 
 bool same_ud_oper(struct informacion_operando* s1, struct informacion_operando* s2) {
     
@@ -453,8 +448,8 @@ char * convertir(struct informacion_operando* s1, char * s2){
     int position2;
 
     float quantity;
-    char * resultado = malloc(100); ;
-    struct medidas * medida = malloc(sizeof(struct medidas)); 
+    char * resultado;
+    struct medidas * medida; 
 
 
     switch(s1->contador) {
@@ -476,11 +471,6 @@ char * convertir(struct informacion_operando* s1, char * s2){
 
             if(position1!=0 || (strcmp(s1->elemento[3], "dinero")==0)){
                 yyerror("no puede tener prefijo");
-                liberarTokens(s1);
-                liberarTokens(unidad);
-                free(s2);
-                free(resultado);
-                free(medida);
                 return NULL;
             }else{
                 
@@ -503,11 +493,6 @@ char * convertir(struct informacion_operando* s1, char * s2){
             position2 = meassureLevel(medida, unidad->elemento[3]);
             if(position2!=0){
                 yyerror("no puede tener prefijo");
-                liberarTokens(s1);
-                liberarTokens(unidad);
-                free(s2);
-                free(resultado);
-                free(medida);
                 return NULL;
             }else{   
                 quantity = pasar_ud_final(quantity, unidad->elemento[0], unidad->elemento[1]);  
@@ -515,10 +500,6 @@ char * convertir(struct informacion_operando* s1, char * s2){
           } 
             break;    
     }
-    liberarTokens(s1);
-    liberarTokens(unidad);
-    free(s2);
-    free(medida);
     return resultado;
 }
 
@@ -565,9 +546,6 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
 
                 if (position1 != 0 || (strcmp(s1->elemento[3], "dinero") == 0)) {
                     yyerror("no puede tener prefijo");
-                    liberarTokens(s1);
-                    liberarTokens(s2);
-                    liberarTokens(miembro);;
                     return NULL;
                 } else {
                     quantity1 = pasar_ud_base(quantity1, s1->elemento[1], s1->elemento[2]);
@@ -591,9 +569,6 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                 position2 = meassureLevel(medida, s2->elemento[4]);
                 if (position2 != 0 || (strcmp(s2->elemento[3], "dinero") == 0)) {
                     yyerror("no puede tener prefijo");
-                    liberarTokens(s1);
-                    liberarTokens(s2);
-                    liberarTokens(miembro);;
                     return NULL;
                 } else {
                     quantity2 = pasar_ud_base(quantity2, s2->elemento[1], s2->elemento[2]);
@@ -610,13 +585,8 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
         }else if (strcmp(signo, "/") == 0) {
             resultado = quantity1 / quantity2;
         }else {
-            liberarTokens(s1);
-            liberarTokens(s2);
-            liberarTokens(miembro);;
             return NULL;
         }
-
-        
 
         if(s1->contador== 3 ) {
             if (position1 != 0) {
@@ -626,14 +596,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
             resultado = pasar_ud_final(resultado, s1->elemento[1], s1->elemento[2]);
         }
         snprintf(miembro->elemento[0], 50, "%.4f", resultado);
-        liberarTokens(s1);
-        liberarTokens(s2);
         return miembro;
     } else {
         yyerror("Las unidades de medida deben ser iguales.");
-        liberarTokens(s1);
-        liberarTokens(s2);
-        liberarTokens(miembro);;
         return NULL;
     }
 }
@@ -653,7 +618,5 @@ char* token_string(struct informacion_operando*s1) {
         }
         snprintf(resultado, 200, "%s %s%s", s1->elemento[0], prefix, s1->elemento[4]);
     }
-
-    liberarTokens(s1);
     return resultado;  
 }

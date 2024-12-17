@@ -11,10 +11,10 @@ compile:
 
 run:
 
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(FUENTE) < $(PRUEBA) 
+	./$(FUENTE) < $(PRUEBA) 
 
 run2:
-	valgrind --leak-check=full --show-leak-kinds=all--track-origins=yes ./$(FUENTE) 
+	./$(FUENTE) 
 
 clean:
 	rm $(FUENTE) lex.yy.c $(FUENTE).tab.c $(FUENTE).tab.h $(FUENTE).output
