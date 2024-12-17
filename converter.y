@@ -46,7 +46,7 @@ struct medidas distancia[4] = {
     {"metro", 1},
     {"yarda", 1.09},
     {"pie", 3.28},
-    {"mile", 0.00062}
+    {"milla", 0.00062}
 };
 
 struct medidas monedas[4] = {
@@ -60,13 +60,13 @@ struct medidas peso[4] = {
     {"gramo", 1},
     {"pound", 0.0022},
     {"onza", 0.035},
-    {"stone", 0.00016}
+    {"piedra", 0.00016}
 };
 
 struct medidas capacidad[4] = {
     {"litro", 1},
     {"pinta", 2.11},
-    {"gallon", 0.26},
+    {"galon", 0.26},
     {"barril", 0.0063}
 };
 %}
@@ -143,7 +143,7 @@ ud:
     | DOLLAR        { $$ = "dinero dolar"; }
     | EURO          { $$ = "dinero euro ";}
     | GRAMO         { $$ = "peso gramo ";}
-    | STONE         { $$ = "peso stone ";}
+    | STONE         { $$ = "peso piedra ";}
     | POUND         { $$ = "peso libra ";}
     | ONZA          { $$ = "peso onza ";}
     | LITRO         { $$ = "capacidad litro ";}
@@ -534,7 +534,7 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                 medida = meassureType(s1->elemento[1]);
                 position1 = meassureLevel(medida, s1->elemento[2]);
                 if (position1 != 0) { 
-                    quantity1 = quantity1 / medida[position1].conversion;
+                    quantity1 = quantity1 *  medida[position1].conversion;
                     fprintf(stderr, "Depuración: und 1 %.4f en base:\n", quantity1);
                 }
 
@@ -568,7 +568,7 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                 position2 = meassureLevel(medida, s2->elemento[2]);
                 if (position2 != 0) {
                     
-                    quantity2 = quantity2 / medida[position2].conversion;
+                    quantity2 = quantity2 * medida[position2].conversion;
                     fprintf(stderr, "Depuración: und 2 %.4f en base:\n", quantity2);
                 }
                 break;

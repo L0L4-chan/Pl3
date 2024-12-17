@@ -1,59 +1,56 @@
-1. Converión 
-        CantidadEntrada unidadEntrada => UnidadSalida
-        CantidadSalida UnidadSalida
-
-2. Operación
-    que operaciones?
-        SUMA 
-        RESTA
-        MULTIPLICACIÓN 
-        DIVISIÓN
-        RESTO / MODULO 
-        POTENCIAS
-        MEDIA
-        MEDIANA
-        MODA 
-        CAMBIO UNIDADES
-        COMBINADAS
-        CAMBIO MONEDAS
-        
-    como alimentamos datos?
-        txt con todos los datos en formato
-
-            OPERACION 2 + 3
-            OPERACION 5 * 5
-            OPERACION 45 / 5
-            OPERACION 45 MOD 8
-            OPERACION 4 ^ 3
-            OPERACION 3 + (5 * 9) ^ 5
-            OPERACION MEDIA 4 6 1 5 7 7 3 5 7 4 4 6 5 34 32
-            OPERACION MEDIANA 4 6 1 5 7 7 3 5 7 4 4 6 5 34 32
-            OPERACION MODA 4 6 1 5 7 7 3 5 7 4 4 6 5 34 32
-            CONVERSION 1 KILOGRAMO -> MILIGRAMO
-            CONVERSION 1 KILOGRAMO + 5 GRAMO -> MILIGRAMO
-            CONVERSION 1 EURO -> DOLAR
-
-    como identificar diferentes operaciones?
-        salto de linea implica diferente Operación \r \n
-
-    TOKENS
-        entero [0-9]+
-        float [0-9]+\.[0-9]+
-        arrow ->
-        %+-*/^()
-        %MOD
-        %MEDIANA
-        %MEDIA
-        %MODA
-        %GRAMO LIBRA PIEDRA ONZA
-        %LITRO PINTA GALON 
-        %METRO YARDA PIE MILLA
-        %MILI CENTI DECI DECA HECTO KILO 
-        %EURO DOLAR YEN LIBRA 
-        %AÑO MES DIA HORA MINUTO SEGUNDO
-
-    
-        
+conversion 5 EUR -> USD
+conversion 5 EUR -> EUR
+conversion 5 EUR -> GBP
+conversion 3 USD -> JPY
+conversion 5 USD -> EUR
+conversion 5 USD -> GBP
+conversion 5 USD -> USD
+conversion 5 GBP -> JPY
+conversion 5 GBP -> EUR
+conversion 5 GBP -> USD
+conversion 5 GBP -> GBP
+conversion 5 JPY -> JPY
+conversion 5 JPY -> EUR
+conversion 5 JPY -> USD
+conversion 5 JPY -> GBP
+conversion 5 metro -> metro
+conversion 5 metro -> yarda
+conversion 5 metro -> pie
+conversion 5 metro -> milla
+conversion 5 yarda -> metro
+conversion 5 yarda -> yarda
+conversion 5 yarda -> pie
+conversion 5 yarda -> milla
+conversion 5 pie -> metro
+conversion 5 pie -> yarda
+conversion 5 pie -> pie
+conversion 5 pie -> milla
+conversion 5 milla -> metro
+conversion 5 milla -> yarda
+conversion 5 milla -> pie
+conversion 5 milla -> milla
 
 
 
+calculo 3 litro + 2 mililitro
+calculo 3 litro + 5 litro
+calculo 3 litro + 5 gramo
+calculo 3 kilolitro + 5 decalitro
+calculo 3 litro + 5 mililitro
+calculo 3 mililitro + 5 litro
+calculo 3 litro + 5 galon
+calculo 3 barril + 5 litro
+calculo 3 gramo / 5 kilogramo
+calculo 3 piedra + 5 kilogramo
+calculo 3 piedra / 5 onza
+calculo 3 litro + 5 EUR
+calculo 3 miligramo + 5 onza
+calculo 3 hecotometro + 5 metro
+calculo 3 yarda + 5 yarda
+calculo 3 JPY + 5 EUR
+calculo 3 GBP + 5 USD
+
+conversion 3 onza -> yarda
+conversion 3 kilometro -> metro
+conversion 3 hectolitro -> mililitro
+calculo 3 pie / (4 yarda + 5 yarda) 
