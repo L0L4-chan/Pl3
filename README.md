@@ -106,4 +106,6 @@ las operaciones aceptadas son:
 - Multiplicaciones -> *
 - Divisiones ->/
 
-El resultado se mostrara en la unidad del primer elemento de la operacion
+El resultado se mostrara en la unidad del primer elemento de la operacion.
+
+Si falta un elemento en la operación y esta esta incompleta aparecerá error de sintaxis sin especificar y se terminará la ejecución, pues no sera capaz de procesar una regla con elemento faltante
