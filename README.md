@@ -95,14 +95,15 @@ Las medidas de litro, metro y gramo podran ir acompañadas de prefijos:
 - hecto   
 
 
-Para el uso de operaciones aritmeticas entre unidades de medidas usaremos la siguiente sintaxis:
+Para el uso de operaciones aritméticas entre unidades de medidas usaremos la siguiente sintaxis:
 
  calculo X und1 ope Y und2
  calculo 3 miligramo + 5 onza
 
-- Suma +
-- Resta -
-- Multiplicaciones *
-- Divisiones /
+las operaciones aceptadas son:
+- Suma  -> +
+- Resta -> -
+- Multiplicaciones -> *
+- Divisiones ->/
 
-El resultado se mostrara en la unidad inicial.
+El resultado se mostrara en la unidad del primer elemento de la operacion

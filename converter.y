@@ -99,12 +99,12 @@ start:
 
 input:  OPE1 conversion {
     if ($2 !=NULL)
-        printf("El resultado de la conversión en linea %d es: %s\n",(yylineno),$2);
+        printf("El resultado de la conversión es: %s\n",$2);
         free($2);
     }
     | OPE2 operacion {
         if ($2 !=NULL)
-            printf("El resultado de la operación en linea %d es: %s\n",(yylineno),$2);
+            printf("El resultado de la operación es: %s\n",$2);
             free($2);
     
     }
@@ -521,7 +521,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
     int position1;
     int position2;
     float quantity1 = atof(s1->elemento[0]);
+    fprintf(stderr, "Depuración: und 1 %.4f:\n", quantity1);
     float quantity2 = atof(s2->elemento[0]);
+    fprintf(stderr, "Depuración: und 2 %.4f:\n", quantity2);
     float resultado;
     struct medidas *medida;
 
@@ -531,8 +533,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
             case 3:
                 medida = meassureType(s1->elemento[1]);
                 position1 = meassureLevel(medida, s1->elemento[2]);
-                if (position1 != 0) {
+                if (position1 != 0) { 
                     quantity1 = quantity1 / medida[position1].conversion;
+                    fprintf(stderr, "Depuración: und 1 %.4f en base:\n", quantity1);
                 }
 
                 miembro->elemento[1] = s1->elemento[1];
@@ -548,7 +551,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                     yyerror("no puede tener prefijo");
                     return NULL;
                 } else {
+                    
                     quantity1 = pasar_ud_base(quantity1, s1->elemento[1], s1->elemento[2]);
+                    fprintf(stderr, "Depuración: und 1 %.4fen base:\n", quantity1);
                 }
                 miembro->elemento[1] = s1->elemento[1];
                 miembro->elemento[2] = s1->elemento[2];
@@ -562,7 +567,9 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
             case 3:
                 position2 = meassureLevel(medida, s2->elemento[2]);
                 if (position2 != 0) {
+                    
                     quantity2 = quantity2 / medida[position2].conversion;
+                    fprintf(stderr, "Depuración: und 2 %.4f en base:\n", quantity2);
                 }
                 break;
             case 5:
@@ -572,6 +579,7 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
                     return NULL;
                 } else {
                     quantity2 = pasar_ud_base(quantity2, s2->elemento[1], s2->elemento[2]);
+                       fprintf(stderr, "Depuración: und 2 %.4f en base:\n", quantity2);
                 }
                 break;
         }
@@ -590,10 +598,14 @@ struct informacion_operando* operacion_prioritaria(struct informacion_operando* 
 
         if(s1->contador== 3 ) {
             if (position1 != 0) {
+                   fprintf(stderr, "Depuración: final %.4f en base:\n",resultado);
                 resultado = resultado * medida[position1].conversion;
+                   fprintf(stderr, "Depuración: final %.4f en final:\n", resultado);
             }
         } else {
+            fprintf(stderr, "Depuración: final %.4f en base:\n",resultado);
             resultado = pasar_ud_final(resultado, s1->elemento[1], s1->elemento[2]);
+            fprintf(stderr, "Depuración: final %.4f en base:\n",resultado);
         }
         snprintf(miembro->elemento[0], 50, "%.4f", resultado);
         return miembro;
