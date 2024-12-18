@@ -3,6 +3,8 @@
 #include "converter.tab.h"
 
 void showError(char* arg);
+int error_flag = 0; 
+
 %}
 
 %option yylineno
@@ -71,11 +73,13 @@ hecto   "hecto"
 {hecto}                  { return HECTO; }
 
 [ \t\r\n]+               {  }
-.                        {showError(yytext);}
+.                        { showError(yytext); return ERROR_TOKEN;}
 
 
 %%
 
 void showError(char* arg) { 
     printf("LEXICAL ERROR: %s at line %d\n", arg, yylineno);
+    error_flag = 1;
+      return;
 }
