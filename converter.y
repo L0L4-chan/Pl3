@@ -1,3 +1,4 @@
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -132,6 +133,7 @@ miembro:
         snprintf(aux, sizeof(aux), "%f %s", $1, $2); 
         $$ = dameTokens(aux);
     }
+    | REAL { yyerror("falta la unidad"); $$ = NULL;}
 ;
 
 unidad:
@@ -220,6 +222,7 @@ int main(int argc, char *argv[]) {
             yyparse();
                if (error_flag) {
                 fprintf(stderr, "Se detectaron errores léxicos. Terminando el programa.\n");
+                print_errors();
                 return 1; 
             }
             break;
