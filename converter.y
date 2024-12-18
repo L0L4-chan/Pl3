@@ -24,6 +24,7 @@ struct er errores[100];
 int error_count = 0;
 extern int yylex();
 extern int yylineno;
+extern int error_flag;
 void yyerror(const char *s);
 void print_errors();
 
@@ -72,6 +73,7 @@ struct medidas capacidad[4] = {
 %}
 
 %token <valFloat> REAL
+%token ERROR_TOKEN
 %token <valString> OPE1 OPE2 PLUS MINUS MUL DIV LPAREN RPAREN ARROW 
 %token <valString> GBP YEN DOLLAR EURO GRAMO STONE POUND ONZA LITRO PINTA GALLON BARRIL METRO YARDA PIE MILE 
 %token <valString> MILI DECI CENTI DECA HECTO KILO 
@@ -90,6 +92,10 @@ struct medidas capacidad[4] = {
 %%
 
 s: start
+ | ERROR_TOKEN { 
+        fprintf(stderr, "Parsing aborted due to a lexical error.\n"); 
+        YYABORT; 
+    }
 ;
 
 start: 
@@ -207,19 +213,28 @@ factor:
 
 int main(int argc, char *argv[]) {
     extern FILE *yyin;
-
+    error_flag = 0;
     switch (argc) {
         case 1:
             yyin = stdin;
             yyparse();
-            if (error_count != 0) print_errors();
+               if (error_flag) {
+                fprintf(stderr, "Se detectaron errores léxicos. Terminando el programa.\n");
+                return 1; 
+            }
             break;
         case 2:
             yyin = fopen(argv[1], "r");
             if (yyin == NULL) {
                 printf("ERROR: No se ha podido abrir el fichero.\n");
+                return 1;
             } else {
                 yyparse();
+                if (error_flag) { 
+                    printf("Se encontraron errores durante el análisis.\n");
+                    fclose(yyin);
+                    return 1; 
+                }
                 if (error_count != 0) print_errors();
                 fclose(yyin);
             }
