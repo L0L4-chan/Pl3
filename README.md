@@ -11,15 +11,12 @@ El presente documento pretende dar a conocer la herramienta y su funcionamiento
 
 ## Uso
 
-Para la ejecucion de codigo es necesario indicar en el archivo Makefile, como prueba el archivo a analizar.
+Para la ejecucion de codigo es necesario indicar en el archivo Makefile, como prueba, el archivo a analizar con todas las operaciones que se desean ejecutar.
+En caso de que se quiera ejectar por consola e introducir las lineas manualmente se debe modificar en el makefile la linea cinco sustituyendo run por run2.
 
-O si se quiere ejectar por consola e introducir las lineas manualmente modificar en el makefile la linea cinco sustituyendo run por run2.
+La presente herramienta realiza dos tipos de operaciones, conversiones y cálculos aritiméticos simples.
 
-La presente herramienta realiza dos tipos de operaciones:
-
-Conversiones
-
-Maneja las siguientes escalas:
+Para ello se ha implementado el reconocimiento de las siguientes magnitudes:
 
 De distancia:
 - metro 
@@ -45,29 +42,32 @@ De capacidad
 - galon
 - barril
 
-Operaciones aritmeticas simples 
+Para las operaciones aritméticas se han implementado las siguientes
 
 - Suma
 - Resta
 - Multiplicaciones
 - Divisiones
 
-Se analizara y ejecutara todo el archivo y se mostrara los resultados por pantalla y al final del archivo se mostraran los errores encontrados.
+Se analiza y ejecuta todo el archivo y se muestran los resultados por pantalla. En caso de encontrar errores estos se muestran al final de la ejecución.
 
-Si se comente un error lexico, ell error aparecera cuando se haya encontrado y podra influir en los resultados que se calculen a partir de la linea donde ocurra.
+Los errores léxicos aparecen en el momento en que se encuentran pudiendo afectar a los cálculos ejecutados a partir de esa línea si se utilizan operaciones encadenadas.
 
-si se comente un error sintactico o de otro tipo, (por ejemplo intentar convertir unidades de peso en unidades de divisa) el error se indicara al finalizar la ejecución.
+Los errores sintácticos o de otro tipo, (por ejemplo intentar convertir unidades de peso en unidades de divisa) se indican al finalizar la ejecución.
 
 ## Lenguaje
 
-Para poder utilizar la herramienta conversora se debera usar la siguiente sintaxsis:
+Para poder utilizar la herramienta conversora se debe usar la siguiente sintaxsis:
 
 conversion X  udOrigen -> udDestino
 ej:
 '''
 conversion 3 EUR -> JPY 
 '''
-Para las unidades utilizaremos los siguientes lexemas:
+
+En el archivo de ejemplo se muestran numerosos ejemplos de ejecución que puede reconocer el analizador léxico.
+
+Para las unidades se pueden utilizar los siguientes lexemas:
 - metro -> metro
 - yarda -> yarda
 - pie -> pie
@@ -85,7 +85,7 @@ Para las unidades utilizaremos los siguientes lexemas:
 - galon -> galon
 - barril  -> barril
 
-Las medidas de litro, metro y gramo podran ir acompañadas de prefijos:
+Las magnitudes del sistema internacional (litro, metro y gramo) pueden utilizarse con los prefijos escalares siguientes:
 
 - mili    
 - deci   
@@ -106,6 +106,7 @@ las operaciones aceptadas son:
 - Multiplicaciones -> *
 - Divisiones ->/
 
-El resultado se mostrara en la unidad del primer elemento de la operacion.
+Para simplificar el funcionamiento, el resultado se mostrara en la unidad del primer elemento de la operacion.
 
-Si falta un elemento en la operación y esta esta incompleta aparecerá error de sintaxis sin especificar y se terminará la ejecución, pues no sera capaz de procesar una regla con elemento faltante
+Si falta un elemento en la operación y esta esta incompleta aparecerá error de sintaxis sin especificar y se terminará la ejecución, pues no sera capaz de procesar una regla con elemento faltante.
+
